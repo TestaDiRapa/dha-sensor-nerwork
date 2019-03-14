@@ -3,6 +3,8 @@ package Commons;
 public interface Constants {
 
     String ADDRESS = "224.0.0.1";
+    int PORT = 6666;
+    int MULTICAST_PORT = 7777;
     int TTL = 1;
 
     int WASHING_MACHINE = 0;

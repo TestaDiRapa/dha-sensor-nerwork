@@ -10,10 +10,13 @@ public class Device {
 
     private InetAddress address;
     private int port;
+    private int type;
+    private int lastValueSent;
 
-    public Device(InetAddress address, int port) {
+    public Device(InetAddress address, int port, int type) {
         this.address = address;
         this.port = port;
+        this.type = type;
     }
 
     public InetAddress getAddress() {
@@ -22,6 +25,18 @@ public class Device {
 
     public int getPort() {
         return port;
+    }
+
+    public int getLastValueSent() {
+        return lastValueSent;
+    }
+
+    public void setLastValueSent(int lastValueSent) {
+        this.lastValueSent = lastValueSent;
+    }
+
+    public int getType() {
+        return type;
     }
 
     @Override
