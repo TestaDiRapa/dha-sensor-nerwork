@@ -1,30 +1,18 @@
 package Server;
 
-import java.net.InetAddress;
-import java.util.Objects;
+import java.time.Instant;
 
 /**
  * A class that represents a device as IP + PORT
  */
 public class Device {
 
-    private InetAddress address;
-    private int port;
     private int type;
     private int lastValueSent;
+    private Instant lastCommunication;
 
-    public Device(InetAddress address, int port, int type) {
-        this.address = address;
-        this.port = port;
+    public Device(int type) {
         this.type = type;
-    }
-
-    public InetAddress getAddress() {
-        return address;
-    }
-
-    public int getPort() {
-        return port;
     }
 
     public int getLastValueSent() {
@@ -39,15 +27,11 @@ public class Device {
         return type;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(address, port);
+    public Instant getLastCommunication() {
+        return lastCommunication;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        return (obj instanceof Device) &&
-                (address.equals(((Device) obj).getAddress())) &&
-                (port == ((Device) obj).getPort());
+    public void setLastCommunication(Instant lastCommunication) {
+        this.lastCommunication = lastCommunication;
     }
 }
