@@ -6,6 +6,7 @@ public interface Constants {
     int PORT = 6666;
     int MULTICAST_PORT = 7777;
     int TTL = 1;
+    int MAX = 65000;
 
     int WASHING_MACHINE = 0;
     int FRIDGE = 1;
