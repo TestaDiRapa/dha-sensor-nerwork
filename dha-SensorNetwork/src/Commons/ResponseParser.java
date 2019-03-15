@@ -22,4 +22,12 @@ public class ResponseParser {
         return -1;
     }
 
+    public static String dataSendMessage(int type, int value) {
+        return type + "DATA" + value;
+    }
+
+    public static String aliveMessage(int type) {
+        return "ALIVE" + type;
+    }
+
 }
