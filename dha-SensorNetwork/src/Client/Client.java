@@ -25,7 +25,7 @@ public class Client implements Runnable {
     
     private int ID;
     private String addressOutput;
-    private String portOutput;
+    private int portOutput;
     
     
     
@@ -50,19 +50,17 @@ public class Client implements Runnable {
             
             System.out.println(messagePacket.getData());
             
-            if(isServer(messagePacket)){
-                
+             if(isServer(messagePacket)){
+                addressOutput=messagePacket.getAddress().getHostAddress();
+                portOutput= messagePacket.getPort();
+ 
                 message="YES".getBytes(StandardCharsets.UTF_8);
                 DatagramPacket packet = new DatagramPacket(message, message.length, InetAddress.getByName(ADDRESS), MULTICAST_PORT);
                 multicastSocket.send(packet);
                 
+             }
             }
-            }
-            
-            
-            
-            
-            
+   
         } catch (IOException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
