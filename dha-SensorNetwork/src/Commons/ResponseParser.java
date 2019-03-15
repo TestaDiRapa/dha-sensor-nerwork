@@ -14,4 +14,12 @@ public class ResponseParser {
         return ret;
     }
 
+    public static int isAlive(DatagramPacket packet){
+        String payload = new String(packet.getData());
+        if(payload.matches("ALIVE[0-9]")){
+            return Integer.parseInt(payload.split("ALIVE")[0]);
+        }
+        return -1;
+    }
+
 }

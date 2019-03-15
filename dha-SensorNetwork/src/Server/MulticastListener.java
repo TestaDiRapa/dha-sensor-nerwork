@@ -11,15 +11,16 @@ import static Commons.Constants.*;
 public class MulticastListener implements Runnable{
 
     private Server mainServer;
+    private MulticastSocket multicastSocket;
 
-    public MulticastListener(Server mainServer) {
+    public MulticastListener(Server mainServer, MulticastSocket multicastSocket) {
         this.mainServer = mainServer;
+        this.multicastSocket = multicastSocket;
     }
 
     @Override
     public void run() {
-        try(MulticastSocket multicastSocket = new MulticastSocket(PORT)){
-
+        try{
             multicastSocket.joinGroup(InetAddress.getByName(ADDRESS));
             byte[] payload = new byte[MAX];
             DatagramPacket packet = new DatagramPacket(payload, payload.length);

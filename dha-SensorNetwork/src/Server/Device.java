@@ -8,18 +8,20 @@ import java.time.Instant;
 public class Device {
 
     private int type;
-    private int lastValueSent;
+    private Integer lastValueSent;
     private Instant lastCommunication;
 
-    public Device(int type) {
+    Device(int type) {
         this.type = type;
+        lastCommunication = Instant.now();
+        lastValueSent = null;
     }
 
     public int getLastValueSent() {
         return lastValueSent;
     }
 
-    public void setLastValueSent(int lastValueSent) {
+    void setLastValueSent(int lastValueSent) {
         this.lastValueSent = lastValueSent;
     }
 
@@ -31,7 +33,7 @@ public class Device {
         return lastCommunication;
     }
 
-    public void setLastCommunication(Instant lastCommunication) {
-        this.lastCommunication = lastCommunication;
+    void resetLastCommunication() {
+        lastCommunication = Instant.now();
     }
 }

@@ -14,16 +14,19 @@ import static Commons.Constants.*;
 
 public class Server implements Runnable{
 
-    private Map<Identifier, Device> devices;
-
-    public Server(){
-        devices = new HashMap<>();
-    }
+    private final Map<Identifier, Device> devices = new HashMap<>();
 
     @Override
     public void run() {
         try {
             MulticastSocket multicastSocket = new MulticastSocket();
+
+            AliveChecker aliveChecker = new AliveChecker(this);
+            MulticastListener multicastListener = new MulticastListener(this, multicastSocket);
+
+            new Thread(aliveChecker).start();
+            new Thread(multicastListener).start();
+
             while(true) {
                 sendHello(multicastSocket);
                 Thread.sleep(20000);
@@ -39,11 +42,26 @@ public class Server implements Runnable{
         socket.send(packet);
     }
 
-    public synchronized void updateValue(InetAddress address, int port, int value) {
-        Device d = devices.get(new Identifier(address, port));
-        if(d != null){
-            d.setLastValueSent(value);
-            d.setLastCommunication(Instant.now());
+    void updateValue(InetAddress address, int port, int value) {
+        synchronized (devices) {
+            Device d = devices.get(new Identifier(address, port));
+            if (d != null) {
+                d.setLastValueSent(value);
+                d.resetLastCommunication();
+            }
+        }
+    }
+
+    void updateAliveDevices(InetAddress address, int port, int type) {
+        synchronized (devices) {
+            Identifier i = new Identifier(address, port);
+            Device d = devices.get(i);
+            if(d == null){
+                devices.put(i, new Device(type));
+            }
+            else{
+                d.resetLastCommunication();
+            }
         }
     }
 }
