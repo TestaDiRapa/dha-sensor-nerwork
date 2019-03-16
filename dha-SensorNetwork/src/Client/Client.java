@@ -10,6 +10,7 @@ import static Commons.Constants.MAX;
 import static Commons.Constants.MULTICAST_PORT;
 import static Commons.Constants.PORT;
 import static Commons.ResponseParser.isAlive;
+import static com.sun.org.apache.xalan.internal.xsltc.compiler.util.Type.Int;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -26,6 +27,7 @@ public class Client implements Runnable {
     private int ID;
     private String addressOutput;
     private int portOutput;
+    private boolean alive=true;
     
     
     
@@ -40,7 +42,8 @@ public class Client implements Runnable {
             
             MulticastSocket multicastSocket = new MulticastSocket(PORT);
             multicastSocket.joinGroup(InetAddress.getByName(ADDRESS));
-            
+            //Controllo connessione da parte del server
+            //while true xk in caso di disconnessione e poi riconnessione
             while (true){
             
             byte[] message = new byte[MAX];
@@ -53,15 +56,23 @@ public class Client implements Runnable {
              if(isServer(messagePacket)){
                 addressOutput=messagePacket.getAddress().getHostAddress();
                 portOutput= messagePacket.getPort();
- 
-                message="YES".getBytes(StandardCharsets.UTF_8);
-                DatagramPacket packet = new DatagramPacket(message, message.length, InetAddress.getByName(ADDRESS), MULTICAST_PORT);
-                multicastSocket.send(packet);
-                
+                DatagramSocket socket = new DatagramSocket(PORT);
+                  byte[] buffer = new byte[MAX];
+                  
+                  //In caso di pausa del client alive diventa false e esce dal while
+                  //cosi ritorna nel primo while
+                while(alive){
+                message="I'm alive".getBytes(StandardCharsets.UTF_8);
+                DatagramPacket packet = new DatagramPacket(message, message.length, InetAddress.getByName(addressOutput), portOutput);
+                socket.send(packet);
+                Thread.sleep(1000);
+                }
              }
             }
    
         } catch (IOException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InterruptedException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
          
@@ -72,7 +83,7 @@ public class Client implements Runnable {
     
     public static boolean isServer(DatagramPacket packet){
         String payload = new String(packet.getData());
-        if(payload.matches("HELLO[0-9]") || payload.matches("HELLO[0-9]")){
+        if(payload.matches("HELLO[0-9]")){
             return true;
         }
         return false;
