@@ -2,6 +2,8 @@ package Commons;
 
 import java.net.DatagramPacket;
 import java.nio.charset.StandardCharsets;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ResponseParser {
 
@@ -18,8 +20,11 @@ public class ResponseParser {
     public static int isAlive(DatagramPacket packet){
         String payload = new String(packet.getData());
         //FARE CON MATCH
-        if(payload.equals("ALIVE")){
-            return Integer.parseInt(payload.split("ALIVE")[0]);
+        if(payload.matches("ALIVE[0-9].*")){
+            Pattern p = Pattern.compile("(ALIVE)([0-9])(.*)");
+            Matcher m = p.matcher(payload);
+            m.find();
+            return Integer.parseInt(m.group(2));
         }
         return -1;
     }

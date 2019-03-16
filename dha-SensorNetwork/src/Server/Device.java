@@ -5,7 +5,7 @@ import java.time.Instant;
 /**
  * A class that represents a device as IP + PORT
  */
-public class Device {
+class Device {
 
     private int type;
     private Integer lastValueSent;
@@ -17,19 +17,19 @@ public class Device {
         lastValueSent = null;
     }
 
-    public int getLastValueSent() {
+    Integer getLastValueSent() {
         return lastValueSent;
     }
 
-    void setLastValueSent(int lastValueSent) {
+    void setLastValueSent(Integer lastValueSent) {
         this.lastValueSent = lastValueSent;
     }
 
-    public int getType() {
+    int getType() {
         return type;
     }
 
-    public Instant getLastCommunication() {
+    Instant getLastCommunication() {
         return lastCommunication;
     }
 

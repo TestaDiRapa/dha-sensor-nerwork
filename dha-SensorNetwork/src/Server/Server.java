@@ -4,9 +4,8 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
-import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
-import java.time.Instant;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,6 +14,11 @@ import static Commons.Constants.*;
 public class Server implements Runnable{
 
     private final Map<Identifier, Device> devices = new HashMap<>();
+    private ServerGUI gui;
+
+    public Server(ServerGUI gui){
+        this.gui = gui;
+    }
 
     @Override
     public void run() {
@@ -54,17 +58,18 @@ public class Server implements Runnable{
     }
 
     void updateAliveDevices(InetAddress address, int port, int type) {
+        Collection<Device> values;
         synchronized (devices) {
             Identifier i = new Identifier(address, port);
             Device d = devices.get(i);
             if(d == null){
                 devices.put(i, new Device(type));
-                //MOSTRARE QUALI DEVICE SONO CONNESSI
-                System.out.println(devices);
             }
             else{
                 d.resetLastCommunication();
             }
+            values = devices.values();
         }
+        gui.updateDevices(values);
     }
 }
