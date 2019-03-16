@@ -9,9 +9,8 @@ import static Commons.Constants.ADDRESS;
 import static Commons.Constants.MAX;
 import static Commons.Constants.MULTICAST_PORT;
 import static Commons.Constants.PORT;
-import static Commons.Constants.PORTSERVER;
-import static Commons.ResponseParser.isAlive;
-import static com.sun.org.apache.xalan.internal.xsltc.compiler.util.Type.Int;
+import static Commons.ResponseParser.aliveMessage;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -20,8 +19,9 @@ import java.net.MulticastSocket;
 import java.nio.charset.StandardCharsets;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
-import javax.swing.plaf.OptionPaneUI;
 
 public class Client implements Runnable {
     
@@ -48,25 +48,26 @@ public class Client implements Runnable {
             //while true xk in caso di disconnessione e poi riconnessione
             while (true){
             //Da mettere MAX
-            byte[] message = new byte[5];
+            byte[] message = new byte[MAX];
             DatagramPacket messagePacket = new DatagramPacket(message, message.length);
             
             multicastSocket.receive(messagePacket);
             
-            
-             if(isServer(messagePacket)){
+            int port = isServer(messagePacket);
+
+            if(port != -1){
                 System.out.println("RICEVUTO HELLO");
                 InetAddress addressOutput=messagePacket.getAddress();
                 System.out.println("Address server"+addressOutput);
                 DatagramSocket socket = new DatagramSocket(PORT);
-                  byte[] buffer = new byte[MAX];
+                byte[] buffer = new byte[MAX];
                   
                   //In caso di pausa del client alive diventa false e esce dal while
                   //cosi ritorna nel primo while
                 while(alive){
-                message="ALIVE".getBytes(StandardCharsets.UTF_8);
-                //DA CAMBIARE PORTSERVER xk lo deve prendere autonomamente la porta
-                DatagramPacket packet = new DatagramPacket(message, message.length, addressOutput, PORTSERVER);
+                message = aliveMessage(ID);
+
+                DatagramPacket packet = new DatagramPacket(message, message.length, addressOutput, port);
                 socket.send(packet);
                 
                 System.out.println("INVIATO ALIVE da ID: " +ID);
@@ -87,15 +88,18 @@ public class Client implements Runnable {
     
     
     
-    public static boolean isServer(DatagramPacket packet){
+    public static int isServer(DatagramPacket packet){
         
         String payload = new String(packet.getData());
-        System.out.println(payload.length());
         //matchare anche con la porta, non funziona equals xk vale il MAX del message
-        if(payload.equals("HELLO")){
-            return true;
+
+        if(payload.matches("HELLO[0-9]{4}.*")){
+            Pattern p = Pattern.compile("(HELLO)([0-9]{4})(.*)");
+            Matcher m = p.matcher(payload);
+            m.find();
+            return Integer.parseInt(m.group(2));
         }
-        return false;
+        return -1;
     } 
     
     

@@ -19,7 +19,7 @@ public class Server implements Runnable{
     @Override
     public void run() {
         try {
-            MulticastSocket multicastSocket = new MulticastSocket();
+            MulticastSocket multicastSocket = new MulticastSocket(MULTICAST_PORT);
 
             AliveChecker aliveChecker = new AliveChecker(this);
             MulticastListener multicastListener = new MulticastListener(this, multicastSocket);
@@ -29,7 +29,6 @@ public class Server implements Runnable{
 
             while(true) {
                 sendHello(multicastSocket);
-                System.out.println("SEND");
                 //Mettere 20000
                 Thread.sleep(5000);
             }
@@ -39,7 +38,7 @@ public class Server implements Runnable{
     }
 
     private synchronized void sendHello(MulticastSocket socket) throws IOException {
-        byte [] payload = "HELLO".getBytes(StandardCharsets.UTF_8);
+        byte [] payload = ("HELLO"+PORT).getBytes(StandardCharsets.UTF_8);
         DatagramPacket packet = new DatagramPacket(payload, payload.length, InetAddress.getByName(ADDRESS), MULTICAST_PORT);
         socket.send(packet);
     }

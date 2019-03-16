@@ -4,9 +4,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 
-import static Commons.Constants.MAX;
 import static Commons.Constants.PORT;
-import static Commons.Constants.PORTSERVER;
 import static Commons.ResponseParser.isAlive;
 
 public class AliveChecker implements Runnable {
@@ -19,7 +17,7 @@ public class AliveChecker implements Runnable {
 
     @Override
     public void run() {
-        try(DatagramSocket socket = new DatagramSocket(PORTSERVER)){
+        try(DatagramSocket socket = new DatagramSocket(PORT)){
             //METTERE MAX
             byte[] buffer = new byte[5];
             DatagramPacket bufferPacket = new DatagramPacket(buffer, buffer.length);

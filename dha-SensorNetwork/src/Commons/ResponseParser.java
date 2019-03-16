@@ -1,6 +1,7 @@
 package Commons;
 
 import java.net.DatagramPacket;
+import java.nio.charset.StandardCharsets;
 
 public class ResponseParser {
 
@@ -23,12 +24,12 @@ public class ResponseParser {
         return -1;
     }
 
-    public static String dataSendMessage(int type, int value) {
-        return type + "DATA" + value;
+    public static byte[] dataSendMessage(int type, int value) {
+        return (type + "DATA" + value).getBytes(StandardCharsets.UTF_8);
     }
 
-    public static String aliveMessage(int type) {
-        return "ALIVE" + type;
+    public static byte[] aliveMessage(int type) {
+        return ("ALIVE" + type).getBytes(StandardCharsets.UTF_8);
     }
 
 }
