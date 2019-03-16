@@ -16,7 +16,8 @@ public class ResponseParser {
 
     public static int isAlive(DatagramPacket packet){
         String payload = new String(packet.getData());
-        if(payload.matches("ALIVE[0-9]")){
+        //FARE CON MATCH
+        if(payload.equals("ALIVE")){
             return Integer.parseInt(payload.split("ALIVE")[0]);
         }
         return -1;

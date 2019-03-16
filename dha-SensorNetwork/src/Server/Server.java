@@ -29,7 +29,9 @@ public class Server implements Runnable{
 
             while(true) {
                 sendHello(multicastSocket);
-                Thread.sleep(20000);
+                System.out.println("SEND");
+                //Mettere 20000
+                Thread.sleep(5000);
             }
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
@@ -58,6 +60,8 @@ public class Server implements Runnable{
             Device d = devices.get(i);
             if(d == null){
                 devices.put(i, new Device(type));
+                //MOSTRARE QUALI DEVICE SONO CONNESSI
+                System.out.println(devices);
             }
             else{
                 d.resetLastCommunication();

@@ -2,9 +2,10 @@ package Commons;
 
 public interface Constants {
 
-    String ADDRESS = "224.0.0.1";
+    String ADDRESS = "224.0.0.2";
     int PORT = 6666;
     int MULTICAST_PORT = 7777;
+    int PORTSERVER=8888;
     int TTL = 1;
     int MAX = 65000;
 

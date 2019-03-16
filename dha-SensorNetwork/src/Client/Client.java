@@ -9,6 +9,7 @@ import static Commons.Constants.ADDRESS;
 import static Commons.Constants.MAX;
 import static Commons.Constants.MULTICAST_PORT;
 import static Commons.Constants.PORT;
+import static Commons.Constants.PORTSERVER;
 import static Commons.ResponseParser.isAlive;
 import static com.sun.org.apache.xalan.internal.xsltc.compiler.util.Type.Int;
 import java.io.IOException;
@@ -37,35 +38,40 @@ public class Client implements Runnable {
         try {
             Object[] possibleType={"WASHING MACHINE","FRIDGE","LIGHT BULB","THERMOSTAT","OVEN","FISH TANK","TV"};
             String type;
-            type=(String)JOptionPane.showInputDialog(null,"Possible Type", "Choise", JOptionPane.WARNING_MESSAGE);
+            type=(String)JOptionPane.showInputDialog(null,"Possible Type", "Choise",JOptionPane.QUESTION_MESSAGE,null,possibleType,"TV");
             ID=setID(type);
+            System.out.println(ID);
             
-            MulticastSocket multicastSocket = new MulticastSocket(PORT);
+            MulticastSocket multicastSocket = new MulticastSocket(MULTICAST_PORT);
             multicastSocket.joinGroup(InetAddress.getByName(ADDRESS));
             //Controllo connessione da parte del server
             //while true xk in caso di disconnessione e poi riconnessione
             while (true){
-            
-            byte[] message = new byte[MAX];
+            //Da mettere MAX
+            byte[] message = new byte[5];
             DatagramPacket messagePacket = new DatagramPacket(message, message.length);
             
             multicastSocket.receive(messagePacket);
             
-            System.out.println(messagePacket.getData());
             
              if(isServer(messagePacket)){
-                addressOutput=messagePacket.getAddress().getHostAddress();
-                portOutput= messagePacket.getPort();
+                System.out.println("RICEVUTO HELLO");
+                InetAddress addressOutput=messagePacket.getAddress();
+                System.out.println("Address server"+addressOutput);
                 DatagramSocket socket = new DatagramSocket(PORT);
                   byte[] buffer = new byte[MAX];
                   
                   //In caso di pausa del client alive diventa false e esce dal while
                   //cosi ritorna nel primo while
                 while(alive){
-                message="I'm alive".getBytes(StandardCharsets.UTF_8);
-                DatagramPacket packet = new DatagramPacket(message, message.length, InetAddress.getByName(addressOutput), portOutput);
+                message="ALIVE".getBytes(StandardCharsets.UTF_8);
+                //DA CAMBIARE PORTSERVER xk lo deve prendere autonomamente la porta
+                DatagramPacket packet = new DatagramPacket(message, message.length, addressOutput, PORTSERVER);
                 socket.send(packet);
+                
+                System.out.println("INVIATO ALIVE da ID: " +ID);
                 Thread.sleep(1000);
+                
                 }
              }
             }
@@ -82,8 +88,11 @@ public class Client implements Runnable {
     
     
     public static boolean isServer(DatagramPacket packet){
+        
         String payload = new String(packet.getData());
-        if(payload.matches("HELLO[0-9]")){
+        System.out.println(payload.length());
+        //matchare anche con la porta, non funziona equals xk vale il MAX del message
+        if(payload.equals("HELLO")){
             return true;
         }
         return false;
@@ -105,5 +114,7 @@ public class Client implements Runnable {
     
     
 }
+
+
 
 
