@@ -12,11 +12,9 @@ import static Commons.Constants.PORT;
 import static Commons.ResponseParser.aliveMessage;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.MulticastSocket;
+import java.net.*;
 import java.nio.charset.StandardCharsets;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -53,13 +51,25 @@ public class Client implements Runnable {
             
             multicastSocket.receive(messagePacket);
             
-            int port = isServer(messagePacket);
+            int serverPort = isServer(messagePacket);
 
-            if(port != -1){
+            if(serverPort != -1){
                 System.out.println("RICEVUTO HELLO");
                 InetAddress addressOutput=messagePacket.getAddress();
                 System.out.println("Address server"+addressOutput);
-                DatagramSocket socket = new DatagramSocket(PORT);
+
+                int port = generatePort();
+                DatagramSocket socket;
+                while(true){
+                    try{
+                        socket = new DatagramSocket(port);
+                        System.out.println(port);
+                        break;
+                    } catch (BindException e) {
+                        port = generatePort();
+                    }
+                }
+
                 byte[] buffer = new byte[MAX];
                   
                   //In caso di pausa del client alive diventa false e esce dal while
@@ -67,7 +77,7 @@ public class Client implements Runnable {
                 while(alive){
                 message = aliveMessage(ID);
 
-                DatagramPacket packet = new DatagramPacket(message, message.length, addressOutput, port);
+                DatagramPacket packet = new DatagramPacket(message, message.length, addressOutput, serverPort);
                 socket.send(packet);
                 
                 System.out.println("INVIATO ALIVE da ID: " +ID);
@@ -86,7 +96,9 @@ public class Client implements Runnable {
         
     }
     
-    
+    private int generatePort() {
+        return new Random().nextInt(2000) + 8000;
+    }
     
     public static int isServer(DatagramPacket packet){
         
