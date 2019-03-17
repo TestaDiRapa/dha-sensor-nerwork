@@ -5,7 +5,7 @@ import java.time.Instant;
 /**
  * A class that represents a device as IP + PORT
  */
-class Device {
+class Device implements Comparable<Device>{
 
     private int type;
     private Integer lastValueSent;
@@ -35,5 +35,10 @@ class Device {
 
     void resetLastCommunication() {
         lastCommunication = Instant.now();
+    }
+
+    @Override
+    public int compareTo(Device o) {
+        return lastCommunication.compareTo(o.lastCommunication);
     }
 }

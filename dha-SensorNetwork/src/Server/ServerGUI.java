@@ -6,6 +6,8 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.time.Instant;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
 
 import static Commons.Constants.*;
 
@@ -53,9 +55,11 @@ public class ServerGUI {
      * @param devices a collection of Device objects
      */
     void updateDevices(Collection<Device> devices) {
+        LinkedList<Device> devicesList = new LinkedList<Device>(devices);
+        Collections.sort(devicesList);
         infoPanel.setText("");
         StringBuilder tmp = new StringBuilder();
-        for (Device d : devices) {
+        for (Device d : devicesList) {
             tmp.append(parseType(d.getType())).append(":\n\tLast confirm: ").append(parseInterval(d.getLastCommunication())).append("\n\tLast value sent: ").append(parseValue(d.getLastValueSent())).append("\n\n");
         }
         infoPanel.setText(tmp.toString());
