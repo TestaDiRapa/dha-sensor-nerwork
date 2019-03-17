@@ -50,7 +50,7 @@ public class ServerGUI {
     }
 
     /**
-     * Updates the devices view
+     * Updates the devices view (the devices are sorted in order to put first the ones that sent ALIVE more recently)
      *
      * @param devices a collection of Device objects
      */
