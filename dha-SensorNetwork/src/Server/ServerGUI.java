@@ -2,6 +2,8 @@ package Server;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.time.Instant;
 import java.util.Collection;
 
@@ -13,8 +15,8 @@ import static Commons.Constants.*;
 public class ServerGUI {
     private JTextArea infoPanel;
     private JPanel mainFrame;
-    private Server server;
 
+    private static Server server;
     private static JFrame frame;
 
     /**
@@ -37,10 +39,17 @@ public class ServerGUI {
         frame.pack();
         frame.setVisible(true);
         frame.setResizable(false);
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent windowEvent) {
+                server.stopProtocol();
+            }
+        });
     }
 
     /**
      * Updates the devices view
+     *
      * @param devices a collection of Device objects
      */
     void updateDevices(Collection<Device> devices) {
@@ -55,6 +64,7 @@ public class ServerGUI {
     /**
      * Parse the interval to show it, if the latest communication is more than 30 seconds, than shows "DISCONNECTED",
      * otherwise shows how much time passed from the last communication
+     *
      * @param lastCommunication an Instant instance
      * @return a String to display
      */
@@ -67,6 +77,7 @@ public class ServerGUI {
 
     /**
      * Parses the value of a Device to display it
+     *
      * @param value the value to display
      * @return a String to display
      */
@@ -77,6 +88,7 @@ public class ServerGUI {
 
     /**
      * Parses the type to make it a String
+     *
      * @param type an int of the Constants interface
      * @return a String to display
      */
