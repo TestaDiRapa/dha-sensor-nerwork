@@ -2,10 +2,14 @@ package Server;
 
 import javax.swing.*;
 import java.awt.*;
+import java.time.Instant;
 import java.util.Collection;
 
 import static Commons.Constants.*;
 
+/**
+ * GUI server class
+ */
 public class ServerGUI {
     private JTextArea infoPanel;
     private JPanel mainFrame;
@@ -13,7 +17,10 @@ public class ServerGUI {
 
     private static JFrame frame;
 
-    public ServerGUI() {
+    /**
+     * Constructor, instantiates the server and starts it as a separate thread
+     */
+    private ServerGUI() {
         server = new Server(this);
         new Thread(server).start();
     }
@@ -32,20 +39,47 @@ public class ServerGUI {
         frame.setResizable(false);
     }
 
-    public void updateDevices(Collection<Device> devices) {
+    /**
+     * Updates the devices view
+     * @param devices a collection of Device objects
+     */
+    void updateDevices(Collection<Device> devices) {
         infoPanel.setText("");
-        String tmp = "";
+        StringBuilder tmp = new StringBuilder();
         for (Device d : devices) {
-            tmp += parseType(d.getType()) + ":\n\tLast confirm: " + d.getLastCommunication() + "\n\tLast value sent: " + parseValue(d.getLastValueSent()) + "\n\n";
+            tmp.append(parseType(d.getType())).append(":\n\tLast confirm: ").append(parseInterval(d.getLastCommunication())).append("\n\tLast value sent: ").append(parseValue(d.getLastValueSent())).append("\n\n");
         }
-        infoPanel.setText(tmp);
+        infoPanel.setText(tmp.toString());
     }
 
+    /**
+     * Parse the interval to show it, if the latest communication is more than 30 seconds, than shows "DISCONNECTED",
+     * otherwise shows how much time passed from the last communication
+     * @param lastCommunication an Instant instance
+     * @return a String to display
+     */
+    private String parseInterval(Instant lastCommunication) {
+        long now = Instant.now().toEpochMilli();
+        if (now - lastCommunication.toEpochMilli() > 30000) return "DISCONNECTED";
+        return Long.toString((now - lastCommunication.toEpochMilli()) / 1000);
+
+    }
+
+    /**
+     * Parses the value of a Device to display it
+     * @param value the value to display
+     * @return a String to display
+     */
     private String parseValue(Integer value) {
         if (value == null) return "No value sent!";
         return value.toString();
     }
 
+    /**
+     * Parses the type to make it a String
+     * @param type an int of the Constants interface
+     * @return a String to display
+     */
     private String parseType(int type) {
         switch (type) {
             case WASHING_MACHINE:

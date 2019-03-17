@@ -26,7 +26,7 @@ public class AliveChecker implements Runnable {
                 socket.receive(bufferPacket);
                 int type = isAlive(bufferPacket);
                 if(type >= 0){
-                    server.updateAliveDevices(bufferPacket.getAddress(), bufferPacket.getPort(), type);
+                    server.updateAliveDevice(bufferPacket.getAddress(), bufferPacket.getPort(), type);
                 }
             }
         } catch (IOException e) {
