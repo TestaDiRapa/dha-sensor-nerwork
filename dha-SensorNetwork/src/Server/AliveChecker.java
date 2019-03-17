@@ -42,7 +42,7 @@ public class AliveChecker implements Runnable {
     /**
      * Stops the infinite loop of the main. (It sends a packet to avoid that it waits forever for a packet.
      */
-    public void closeProtocol() {
+    void stopProtocol() {
         try(DatagramSocket socket = new DatagramSocket()){
             running = false;
             byte[] buffer = "SHUT DOWN".getBytes();

@@ -18,6 +18,10 @@ public class Server implements Runnable{
     private final Map<Identifier, Device> devices = new HashMap<>();
     private final ServerGUI gui;
 
+    private AliveChecker aliveChecker;
+    private MulticastListener multicastListener;
+    private boolean running = true;
+
     /**
      * Constructor
      * @param gui a ServerGUI instance
@@ -35,22 +39,34 @@ public class Server implements Runnable{
         try {
             MulticastSocket multicastSocket = new MulticastSocket(MULTICAST_PORT);
 
-            AliveChecker aliveChecker = new AliveChecker(this);
-            MulticastListener multicastListener = new MulticastListener(this, multicastSocket);
+            aliveChecker = new AliveChecker(this);
+            multicastListener = new MulticastListener(this, multicastSocket);
 
             new Thread(aliveChecker).start();
             new Thread(multicastListener).start();
 
-            while(true) {
+            while(running) {
                 sendHello(multicastSocket);
                 //Mettere 20000
                 Thread.sleep(5000);
                 updateGui();
 
             }
+
+            multicastSocket.close();
+
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Closes all the sub-threads and itself
+     */
+    public void stopProtocol() {
+        aliveChecker.stopProtocol();
+        multicastListener.stopProtocol();
+        running = false;
     }
 
     /**

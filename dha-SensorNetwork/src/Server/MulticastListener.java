@@ -4,7 +4,6 @@ import Commons.ResponseParser;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
-import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import static Commons.Constants.*;
@@ -50,7 +49,7 @@ public class MulticastListener implements Runnable{
     /**
      * Stops the infinite loop of the main. (It sends a packet to avoid that it waits forever for a packet.
      */
-    public void closeProtocol() {
+    void stopProtocol() {
         try(MulticastSocket socket = new MulticastSocket()){
             running = false;
             byte[] buffer = "SHUT DOWN".getBytes();
