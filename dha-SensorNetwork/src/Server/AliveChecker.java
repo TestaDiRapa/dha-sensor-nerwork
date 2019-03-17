@@ -3,8 +3,7 @@ package Server;
 import java.io.IOException;
 import java.net.*;
 
-import static Commons.Constants.MAX;
-import static Commons.Constants.PORT;
+import static Commons.Constants.*;
 import static Commons.ResponseParser.isAlive;
 
 /**
@@ -47,7 +46,7 @@ public class AliveChecker implements Runnable {
         try(DatagramSocket socket = new DatagramSocket()){
             running = false;
             byte[] buffer = "SHUT DOWN".getBytes();
-            DatagramPacket packet = new DatagramPacket(buffer, buffer.length, InetAddress.getByName("localhost"), PORT);
+            DatagramPacket packet = new DatagramPacket(buffer, buffer.length, InetAddress.getByName(ADDRESS), PORT);
             socket.send(packet);
         } catch (IOException e) {
             e.printStackTrace();
