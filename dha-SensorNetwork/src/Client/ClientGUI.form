@@ -108,12 +108,12 @@
     </Container>
     <Component class="javax.swing.JLabel" name="jServerInformation">
       <Properties>
-        <Property name="text" type="java.lang.String" value="jLabel1"/>
+        <Property name="text" type="java.lang.String" value="Server"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jClientInformation">
       <Properties>
-        <Property name="text" type="java.lang.String" value="jLabel2"/>
+        <Property name="text" type="java.lang.String" value="Client"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JButton" name="jWaitButton">

@@ -48,6 +48,8 @@ public class Client implements Runnable {
             ID=setID(type);
             gui.setClient("This is the type selected: "+type);
             
+            int port = generatePort();
+            
             MulticastSocket multicastSocket = new MulticastSocket(MULTICAST_PORT);
             multicastSocket.joinGroup(InetAddress.getByName(ADDRESS));
             //Controllo connessione da parte del server
@@ -59,13 +61,14 @@ public class Client implements Runnable {
             multicastSocket.receive(messagePacket);
             
             int serverPort = isServer(messagePacket);
+            
 
             if(serverPort != -1){
                 System.out.println("RICEVUTO HELLO");
                 InetAddress addressOutput=messagePacket.getAddress();
                 gui.setServer("Address server: "+addressOutput+" Port: "+serverPort);
 
-                int port = generatePort();
+                
                 DatagramSocket socket;
                 while(true){
                     try{

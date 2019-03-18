@@ -54,9 +54,9 @@ public class ClientGUI extends javax.swing.JFrame {
         jInputArea.setRows(5);
         jScrollPane4.setViewportView(jInputArea);
 
-        jServerInformation.setText("jLabel1");
+        jServerInformation.setText("Server");
 
-        jClientInformation.setText("jLabel2");
+        jClientInformation.setText("Client");
 
         jWaitButton.setText("Wait");
         jWaitButton.addActionListener(new java.awt.event.ActionListener() {
@@ -113,6 +113,7 @@ public class ClientGUI extends javax.swing.JFrame {
     private void jWaitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jWaitButtonActionPerformed
         // TODO add your handling code here:
         client.setAlive();
+        
     }//GEN-LAST:event_jWaitButtonActionPerformed
 
     /**
