@@ -25,8 +25,14 @@ public class Client implements Runnable {
     private String addressOutput;
     private int portOutput;
     private boolean alive=true;
+    private final ClientGUI gui;
+    
+    public Client(ClientGUI gui){
+        this.gui=gui;
+    }
     
     
+   
    /**
      * Basically the main.Choise the type of type,opens the multicast socket and wait the message of server.
      * Client periodically sends the "alive" message to the server.
@@ -40,7 +46,7 @@ public class Client implements Runnable {
             String type;
             type=(String)JOptionPane.showInputDialog(null,"Possible Type", "Choise",JOptionPane.QUESTION_MESSAGE,null,possibleType,"TV");
             ID=setID(type);
-            System.out.println(ID);
+            gui.setClient("This is the type selected: "+type);
             
             MulticastSocket multicastSocket = new MulticastSocket(MULTICAST_PORT);
             multicastSocket.joinGroup(InetAddress.getByName(ADDRESS));
