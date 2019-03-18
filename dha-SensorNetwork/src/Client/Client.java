@@ -8,12 +8,10 @@ package Client;
 import static Commons.Constants.ADDRESS;
 import static Commons.Constants.MAX;
 import static Commons.Constants.MULTICAST_PORT;
-import static Commons.Constants.PORT;
 import static Commons.ResponseParser.aliveMessage;
 
 import java.io.IOException;
 import java.net.*;
-import java.nio.charset.StandardCharsets;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,6 +27,10 @@ public class Client implements Runnable {
     private boolean alive=true;
     
     
+   /**
+     * Basically the main.Choise the type of type,opens the multicast socket and wait the message of server.
+     * Client periodically sends the "alive" message to the server.
+     */
     
     @Override
     public void run(){
@@ -45,7 +47,6 @@ public class Client implements Runnable {
             //Controllo connessione da parte del server
             //while true xk in caso di disconnessione e poi riconnessione
             while (true){
-            //Da mettere MAX
             byte[] message = new byte[MAX];
             DatagramPacket messagePacket = new DatagramPacket(message, message.length);
             
@@ -87,9 +88,7 @@ public class Client implements Runnable {
              }
             }
    
-        } catch (IOException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InterruptedException ex) {
+        } catch (IOException | InterruptedException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
          
@@ -100,11 +99,14 @@ public class Client implements Runnable {
         return new Random().nextInt(2000) + 8000;
     }
     
+    /**
+     * Controll if the message is from the server, takes the port number from the message content
+     * @param packet the packet from the server
+     * @return 
+     */
     public static int isServer(DatagramPacket packet){
         
         String payload = new String(packet.getData());
-        //matchare anche con la porta, non funziona equals xk vale il MAX del message
-
         if(payload.matches("HELLO[0-9]{4}.*")){
             Pattern p = Pattern.compile("(HELLO)([0-9]{4})(.*)");
             Matcher m = p.matcher(payload);
@@ -114,6 +116,11 @@ public class Client implements Runnable {
         return -1;
     } 
     
+    /**
+     * Set the ID number corresponding to the type of client selected
+     * @param type the type of client selected
+     * @return 
+     */
     
     public static int setID(String type){
         switch(type){
