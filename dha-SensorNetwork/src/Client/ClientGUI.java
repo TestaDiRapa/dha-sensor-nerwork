@@ -8,6 +8,7 @@ package Client;
 
 public class ClientGUI extends javax.swing.JFrame {
     private static Client client;
+    private String chat="";
 
     /**
      * Creates new form ClientGUI
@@ -58,6 +59,11 @@ public class ClientGUI extends javax.swing.JFrame {
         jClientInformation.setText("jLabel2");
 
         jWaitButton.setText("Wait");
+        jWaitButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jWaitButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -104,6 +110,11 @@ public class ClientGUI extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jSendButtonActionPerformed
 
+    private void jWaitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jWaitButtonActionPerformed
+        // TODO add your handling code here:
+        client.setAlive();
+    }//GEN-LAST:event_jWaitButtonActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -142,6 +153,15 @@ public class ClientGUI extends javax.swing.JFrame {
     
     public void setClient(String s){
         jClientInformation.setText(s);
+    }
+    
+    public void setServer(String s){
+        jServerInformation.setText(s);
+    }
+    
+    public void setChat(String s){
+        chat=chat+s + "\n";
+        jChatArea.setText(chat);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

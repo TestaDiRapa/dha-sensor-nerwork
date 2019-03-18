@@ -63,7 +63,7 @@ public class Client implements Runnable {
             if(serverPort != -1){
                 System.out.println("RICEVUTO HELLO");
                 InetAddress addressOutput=messagePacket.getAddress();
-                System.out.println("Address server"+addressOutput);
+                gui.setServer("Address server: "+addressOutput+" Port: "+serverPort);
 
                 int port = generatePort();
                 DatagramSocket socket;
@@ -87,7 +87,7 @@ public class Client implements Runnable {
                 DatagramPacket packet = new DatagramPacket(message, message.length, addressOutput, serverPort);
                 socket.send(packet);
                 
-                System.out.println("INVIATO ALIVE da ID: " +ID);
+                gui.setChat("INVIATO ALIVE ");
                 Thread.sleep(1000);
                 
                 }
@@ -141,6 +141,10 @@ public class Client implements Runnable {
         }
     }
     
+    
+    public void setAlive(){
+        alive=!alive;
+    }
     
 }
 
