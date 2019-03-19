@@ -26,6 +26,7 @@ public class Client implements Runnable {
     private int portOutput;
     private boolean alive=true;
     private final ClientGUI gui;
+    private int port;
     
     public Client(ClientGUI gui){
         this.gui=gui;
@@ -48,7 +49,7 @@ public class Client implements Runnable {
             ID=setID(type);
             gui.setClient("This is the type selected: "+type);
             
-            int port = generatePort();
+            port=generatePort();
             
             MulticastSocket multicastSocket = new MulticastSocket(MULTICAST_PORT);
             multicastSocket.joinGroup(InetAddress.getByName(ADDRESS));
@@ -64,12 +65,13 @@ public class Client implements Runnable {
             
 
             if(serverPort != -1){
-                System.out.println("RICEVUTO HELLO");
+                gui.setChat("Received HELLO");
                 InetAddress addressOutput=messagePacket.getAddress();
                 gui.setServer("Address server: "+addressOutput+" Port: "+serverPort);
-
-                
+ 
                 DatagramSocket socket;
+                
+                
                 while(true){
                     try{
                         socket = new DatagramSocket(port);
