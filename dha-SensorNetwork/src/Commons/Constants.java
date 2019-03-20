@@ -8,6 +8,8 @@ public interface Constants {
     int TTL = 1;
     int MAX = 65000;
 
+    int TOTAL_POWER = 3000;
+
     int WASHING_MACHINE = 0;
     int FRIDGE = 1;
     int LIGHT_BULB = 2;

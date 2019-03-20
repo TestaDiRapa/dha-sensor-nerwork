@@ -8,21 +8,17 @@ import java.time.Instant;
 class Device implements Comparable<Device>{
 
     private int type;
-    private Integer lastValueSent;
+    private int powerConsumption;
     private Instant lastCommunication;
 
-    Device(int type) {
+    Device(int type, int powerConsumption) {
         this.type = type;
+        this.powerConsumption = powerConsumption;
         lastCommunication = Instant.now();
-        lastValueSent = null;
     }
 
-    Integer getLastValueSent() {
-        return lastValueSent;
-    }
-
-    void setLastValueSent(Integer lastValueSent) {
-        this.lastValueSent = lastValueSent;
+    public int getPowerConsumption() {
+        return powerConsumption;
     }
 
     int getType() {

@@ -1,5 +1,7 @@
 package Server;
 
+import Commons.ResponseParser;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
@@ -9,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static Commons.Constants.*;
+import static Commons.ResponseParser.createHelloMessage;
 
 /**
  * The Server class, has a reference to the GUI
@@ -22,6 +25,7 @@ public class Server implements Runnable{
     private MulticastListener multicastListener;
     private boolean running = true;
     private MulticastSocket multicastSocket;
+    private int freePower;
 
     /**
      * Constructor
@@ -75,25 +79,9 @@ public class Server implements Runnable{
      * @throws IOException exception
      */
     public synchronized void sendHello() throws IOException {
-        byte [] payload = ("HELLO"+PORT).getBytes(StandardCharsets.UTF_8);
+        byte [] payload = createHelloMessage(PORT, freePower);
         DatagramPacket packet = new DatagramPacket(payload, payload.length, InetAddress.getByName(ADDRESS), MULTICAST_PORT);
         multicastSocket.send(packet);
-    }
-
-    /**
-     * Updates the value of a connected device, if exists
-     * @param address the IP address of the device
-     * @param port the port of the device
-     * @param value the value received
-     */
-    void updateValue(InetAddress address, int port, int value) {
-        synchronized (devices) {
-            Device d = devices.get(new Identifier(address, port));
-            if (d != null) {
-                d.setLastValueSent(value);
-                d.resetLastCommunication();
-            }
-        }
     }
 
     /**
@@ -102,16 +90,22 @@ public class Server implements Runnable{
      * @param port the port of the device
      * @param type the type of device
      */
-    void updateAliveDevice(InetAddress address, int port, int type) {
+    void updateAliveDevice(InetAddress address, int port, int type, int powerConsumption) {
         synchronized (devices) {
             Identifier i = new Identifier(address, port);
             Device d = devices.get(i);
             if(d == null){
-                devices.put(i, new Device(type));
+                devices.put(i, new Device(type, powerConsumption));
             }
             else{
                 d.resetLastCommunication();
             }
+
+            int usedPower = 0;
+            for(Map.Entry<Identifier, Device> e : devices.entrySet()) {
+                usedPower += e.getValue().getPowerConsumption();
+            }
+
         }
         updateGui();
     }

@@ -75,7 +75,7 @@ public class ServerGUI {
         infoPanel.setText("");
         StringBuilder tmp = new StringBuilder();
         for (Device d : devicesList) {
-            tmp.append(parseType(d.getType())).append(":\n\tLast confirm: ").append(parseInterval(d.getLastCommunication())).append("\n\tLast value sent: ").append(parseValue(d.getLastValueSent())).append("\n\n");
+            tmp.append(parseType(d.getType())).append(":\n\tLast confirm: ").append(parseInterval(d.getLastCommunication())).append("\n\n");
         }
         infoPanel.setText(tmp.toString());
     }

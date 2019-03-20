@@ -36,9 +36,9 @@ public class MulticastListener implements Runnable{
             while (running) {
                 multicastSocket.receive(packet);
                 Integer param = ResponseParser.parseDataReceiving(packet);
-                if(param != null){
-                    mainServer.updateValue(packet.getAddress(), packet.getPort(), param);
-                }
+//                if(param != null){
+//                    mainServer.updateValue(packet.getAddress(), packet.getPort(), param);
+//                }
             }
 
         } catch (IOException e) {
