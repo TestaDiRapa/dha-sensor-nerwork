@@ -2,8 +2,11 @@ package Server;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Collections;
@@ -18,6 +21,7 @@ public class ServerGUI {
     private JTextArea infoPanel;
     private JPanel mainFrame;
 
+    private static JButton refreshButton;
     private static Server server;
     private static JFrame frame;
 
@@ -45,6 +49,14 @@ public class ServerGUI {
             @Override
             public void windowClosing(WindowEvent windowEvent) {
                 server.stopProtocol();
+            }
+        });
+
+        refreshButton.addActionListener(e -> {
+            try {
+                server.sendHello();
+            } catch (IOException e1) {
+                JOptionPane.showMessageDialog(null, "Error in sending the datagram!", "Error!", JOptionPane.ERROR_MESSAGE);
             }
         });
     }
