@@ -64,37 +64,33 @@ public class Client implements Runnable {
                         port = generatePort();
                     }
                 }
-             
-            //The communication start
-            while (true){
-            gui.setState("OFF");
-            byte[] message = new byte[MAX];
-            DatagramPacket messagePacket = new DatagramPacket(message, message.length);
-            
-            multicastSocket.receive(messagePacket);
-            
-            int serverPort = isServer(messagePacket);
-            
-            //If is the "HELLO" message by the server
-            if(serverPort != -1){
-                InetAddress addressOutput=messagePacket.getAddress();
-                gui.setServer("Address server: "+addressOutput+" Port: "+serverPort);
- 
-               
-                byte[] buffer = new byte[MAX];
-                  
-                 //ON by the device
-                while(alive){
-                gui.setState("ON");
-                message = aliveMessage(typeID);
 
-                DatagramPacket packet = new DatagramPacket(message, message.length, addressOutput, serverPort);
-                socket.send(packet);
-                
-                Thread.sleep(1000);
-                
+            //The communication starts
+            while (true){
+                gui.setState("OFF");
+                byte[] message = new byte[MAX];
+                DatagramPacket messagePacket = new DatagramPacket(message, message.length);
+
+                multicastSocket.receive(messagePacket);
+
+                int serverPort = isServer(messagePacket);
+
+                //If is the "HELLO" message by the server
+                if(serverPort != -1){
+                    InetAddress addressOutput=messagePacket.getAddress();
+                    gui.setServer("Address server: "+addressOutput+" Port: "+serverPort);
+
+                     //ON by the device
+                    while(alive){
+                        gui.setState("ON");
+                        message = aliveMessage(typeID, kW);
+
+                        DatagramPacket packet = new DatagramPacket(message, message.length, addressOutput, serverPort);
+                        socket.send(packet);
+
+                        Thread.sleep(1000);
+                    }
                 }
-             }
             }
    
         } catch (IOException | InterruptedException ex) {

@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.net.*;
 
 import static Commons.Constants.*;
-import static Commons.ResponseParser.isAlive;
+import static Commons.ResponseParser.*;
 
 /**
  * This thread checks for the unicast "ALIVE" messages from the devices. Has an instance of the server
@@ -29,9 +29,10 @@ public class AliveChecker implements Runnable {
             DatagramPacket bufferPacket = new DatagramPacket(buffer, buffer.length);
             while(running) {
                 socket.receive(bufferPacket);
-                int type = isAlive(bufferPacket);
-                if(type >= 0){
-                    server.updateAliveDevice(bufferPacket.getAddress(), bufferPacket.getPort(), type);
+                int type = aliveGetType(bufferPacket);
+                int watts = aliveGetPowerConsumption(bufferPacket);
+                if(type >= 0 && watts >=0){
+                    server.updateAliveDevice(bufferPacket.getAddress(), bufferPacket.getPort(), type, watts);
                 }
             }
         } catch (IOException e) {

@@ -38,6 +38,8 @@
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
+          <maximumSize width="40" height="30"/>
+          <minimumSize width="40" height="30"/>
           <text value="Refresh"/>
         </properties>
       </component>
