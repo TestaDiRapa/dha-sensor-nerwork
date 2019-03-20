@@ -21,7 +21,6 @@ public class ServerGUI {
     private JTextArea infoPanel;
     private JPanel mainFrame;
     private JButton refreshButton;
-    private JButton searchButton;
 
     private static Server server;
 
@@ -35,14 +34,9 @@ public class ServerGUI {
         refreshButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                server.updateGui();
-            }
-        });
-        searchButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
                 try {
                     server.sendHello();
+                    server.updateGui();
                 } catch (IOException e1) {
                     JOptionPane.showMessageDialog(null, "Error in sending the datagram!", "Error!", JOptionPane.ERROR_MESSAGE);
                 }
@@ -96,7 +90,7 @@ public class ServerGUI {
     private String parseInterval(Instant lastCommunication) {
         long now = Instant.now().toEpochMilli();
         if (now - lastCommunication.toEpochMilli() > 30000) return "DISCONNECTED";
-        return Long.toString((now - lastCommunication.toEpochMilli()) / 1000) + " seconds ago";
+        return ((now - lastCommunication.toEpochMilli()) / 1000) + " seconds ago";
 
     }
 
