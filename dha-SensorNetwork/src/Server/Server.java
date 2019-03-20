@@ -49,7 +49,7 @@ public class Server implements Runnable{
             while(running) {
                 sendHello();
                 //Mettere 20000
-                Thread.sleep(5000);
+                Thread.sleep(20000);
                 updateGui();
 
             }
@@ -119,7 +119,7 @@ public class Server implements Runnable{
     /**
      * Force updating the GUI information on devices
      */
-    private void updateGui() {
+    void updateGui() {
         synchronized (gui) {
             synchronized (devices) {
                 gui.updateDevices(devices.values());

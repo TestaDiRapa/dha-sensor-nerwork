@@ -39,6 +39,6 @@ class Device implements Comparable<Device>{
 
     @Override
     public int compareTo(Device o) {
-        return lastCommunication.compareTo(o.lastCommunication);
+        return -lastCommunication.compareTo(o.lastCommunication);
     }
 }

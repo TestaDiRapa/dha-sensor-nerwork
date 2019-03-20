@@ -2,8 +2,8 @@ package Server;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
@@ -21,9 +21,9 @@ public class ServerGUI {
     private JTextArea infoPanel;
     private JPanel mainFrame;
     private JButton refreshButton;
+    private JButton searchButton;
 
     private static Server server;
-    private static JFrame frame;
 
     /**
      * Constructor, instantiates the server and starts it as a separate thread
@@ -31,6 +31,23 @@ public class ServerGUI {
     private ServerGUI() {
         server = new Server(this);
         new Thread(server).start();
+
+        refreshButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                server.updateGui();
+            }
+        });
+        searchButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                try {
+                    server.sendHello();
+                } catch (IOException e1) {
+                    JOptionPane.showMessageDialog(null, "Error in sending the datagram!", "Error!", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
     }
 
     /**
@@ -39,7 +56,7 @@ public class ServerGUI {
      * @param args args
      */
     public static void main(String[] args) {
-        frame = new JFrame("ServerGUI");
+        JFrame frame = new JFrame("ServerGUI");
         frame.setContentPane(new ServerGUI().mainFrame);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
@@ -79,7 +96,7 @@ public class ServerGUI {
     private String parseInterval(Instant lastCommunication) {
         long now = Instant.now().toEpochMilli();
         if (now - lastCommunication.toEpochMilli() > 30000) return "DISCONNECTED";
-        return Long.toString((now - lastCommunication.toEpochMilli()) / 1000);
+        return Long.toString((now - lastCommunication.toEpochMilli()) / 1000) + " seconds ago";
 
     }
 
@@ -160,13 +177,6 @@ public class ServerGUI {
         infoPanel.setMinimumSize(new Dimension(575, 275));
         infoPanel.setPreferredSize(new Dimension(575, 275));
         scrollPane1.setViewportView(infoPanel);
-        refreshButton.addActionListener(e -> {
-            try {
-                server.sendHello();
-            } catch (IOException e1) {
-                JOptionPane.showMessageDialog(null, "Error in sending the datagram!", "Error!", JOptionPane.ERROR_MESSAGE);
-            }
-        });
     }
 
     /**
