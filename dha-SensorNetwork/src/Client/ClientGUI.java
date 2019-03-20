@@ -8,7 +8,6 @@ package Client;
 
 public class ClientGUI extends javax.swing.JFrame {
     private static Client client;
-    private String chat="";
 
     /**
      * Creates new form ClientGUI
@@ -17,6 +16,8 @@ public class ClientGUI extends javax.swing.JFrame {
         initComponents();
         client= new Client(this);
         new Thread(client).start();
+        jRadioButton2.setSelected(true);
+
     }
 
     /**
@@ -28,60 +29,56 @@ public class ClientGUI extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane3 = new javax.swing.JScrollPane();
-        jChatArea = new javax.swing.JTextArea();
-        jSendButton = new javax.swing.JButton();
-        jScrollPane4 = new javax.swing.JScrollPane();
-        jInputArea = new javax.swing.JTextArea();
+        buttonGroup1 = new javax.swing.ButtonGroup();
         jServerInformation = new javax.swing.JLabel();
         jClientInformation = new javax.swing.JLabel();
-        jWaitButton = new javax.swing.JButton();
+        jRadioButton1 = new javax.swing.JRadioButton();
+        jRadioButton2 = new javax.swing.JRadioButton();
+        jState = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        jChatArea.setColumns(20);
-        jChatArea.setRows(5);
-        jScrollPane3.setViewportView(jChatArea);
-
-        jSendButton.setText("Send");
-        jSendButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jSendButtonActionPerformed(evt);
-            }
-        });
-
-        jInputArea.setColumns(20);
-        jInputArea.setRows(5);
-        jScrollPane4.setViewportView(jInputArea);
 
         jServerInformation.setText("Server");
 
         jClientInformation.setText("Client");
 
-        jWaitButton.setText("Wait");
-        jWaitButton.addActionListener(new java.awt.event.ActionListener() {
+        jRadioButton1.setText("ON");
+        jRadioButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jWaitButtonActionPerformed(evt);
+                jRadioButton1ActionPerformed(evt);
             }
         });
+
+        jRadioButton2.setText("OFF");
+        jRadioButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton2ActionPerformed(evt);
+            }
+        });
+
+        jState.setText("State");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(83, 83, 83)
+                .addComponent(jRadioButton1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 148, Short.MAX_VALUE)
+                .addComponent(jRadioButton2)
+                .addGap(83, 83, 83))
+            .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jClientInformation, javax.swing.GroupLayout.PREFERRED_SIZE, 229, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jServerInformation, javax.swing.GroupLayout.PREFERRED_SIZE, 341, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 288, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jSendButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jWaitButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 341, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(27, Short.MAX_VALUE))
+                            .addComponent(jServerInformation, javax.swing.GroupLayout.DEFAULT_SIZE, 341, Short.MAX_VALUE)
+                            .addComponent(jClientInformation, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(32, 32, 32)
+                        .addComponent(jState)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -89,32 +86,30 @@ public class ClientGUI extends javax.swing.JFrame {
                 .addComponent(jServerInformation)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jClientInformation, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(39, 39, 39)
-                        .addComponent(jSendButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jWaitButton)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(37, 37, 37)
+                .addComponent(jState)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 166, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jRadioButton1)
+                    .addComponent(jRadioButton2))
+                .addGap(29, 29, 29))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jSendButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jSendButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jSendButtonActionPerformed
+    private void jRadioButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton1ActionPerformed
 
-    private void jWaitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jWaitButtonActionPerformed
         // TODO add your handling code here:
-        client.setAlive();
-        
-    }//GEN-LAST:event_jWaitButtonActionPerformed
+        jRadioButton2.setSelected(false);
+        client.setAlive(true);
+    }//GEN-LAST:event_jRadioButton1ActionPerformed
+
+    private void jRadioButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton2ActionPerformed
+        // TODO add your handling code here:
+        jRadioButton1.setSelected(false);
+        client.setAlive(false);
+    }//GEN-LAST:event_jRadioButton2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -145,6 +140,7 @@ public class ClientGUI extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 new ClientGUI().setVisible(true);
             }
@@ -160,19 +156,18 @@ public class ClientGUI extends javax.swing.JFrame {
         jServerInformation.setText(s);
     }
     
-    public void setChat(String s){
-        chat=chat+s + "\n";
-        jChatArea.setText(chat);
+    public void setState(String s){
+        jState.setText(s);
     }
+    
+   
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextArea jChatArea;
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JLabel jClientInformation;
-    private javax.swing.JTextArea jInputArea;
-    private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JButton jSendButton;
+    private javax.swing.JRadioButton jRadioButton1;
+    private javax.swing.JRadioButton jRadioButton2;
     private javax.swing.JLabel jServerInformation;
-    private javax.swing.JButton jWaitButton;
+    private javax.swing.JLabel jState;
     // End of variables declaration//GEN-END:variables
 }

@@ -21,12 +21,13 @@ import javax.swing.JOptionPane;
 
 public class Client implements Runnable {
     
-    private int ID;
+    private int typeID;
     private String addressOutput;
     private int portOutput;
-    private boolean alive=true;
+    private boolean alive=false;
     private final ClientGUI gui;
     private int port;
+    private int kW;
     
     public Client(ClientGUI gui){
         this.gui=gui;
@@ -43,10 +44,11 @@ public class Client implements Runnable {
     public void run(){
         
         try {
-            Object[] possibleType={"WASHING MACHINE","FRIDGE","LIGHT BULB","THERMOSTAT","OVEN","FISH TANK","TV"};
+            Object[] possibleType={"WASHING MACHINE [240w]","FRIDGE [305w]","LIGHT BULB [150w]","THERMOSTAT [750w]","OVEN [1500]","FISH TANK [400w]","TV [150w]"};
             String type;
             type=(String)JOptionPane.showInputDialog(null,"Possible Type", "Choise",JOptionPane.QUESTION_MESSAGE,null,possibleType,"TV");
-            ID=setID(type);
+            typeID=setID(type)[0];
+            kW=setID(type)[1];
             gui.setClient("This is the type selected: "+type);
             
             port=generatePort();
@@ -56,6 +58,7 @@ public class Client implements Runnable {
             //Controllo connessione da parte del server
             //while true xk in caso di disconnessione e poi riconnessione
             while (true){
+            gui.setState("OFF");
             byte[] message = new byte[MAX];
             DatagramPacket messagePacket = new DatagramPacket(message, message.length);
             
@@ -65,7 +68,6 @@ public class Client implements Runnable {
             
 
             if(serverPort != -1){
-                gui.setChat("Received HELLO");
                 InetAddress addressOutput=messagePacket.getAddress();
                 gui.setServer("Address server: "+addressOutput+" Port: "+serverPort);
  
@@ -87,12 +89,12 @@ public class Client implements Runnable {
                   //In caso di pausa del client alive diventa false e esce dal while
                   //cosi ritorna nel primo while
                 while(alive){
-                message = aliveMessage(ID);
+                gui.setState("ON");
+                message = aliveMessage(typeID);
 
                 DatagramPacket packet = new DatagramPacket(message, message.length, addressOutput, serverPort);
                 socket.send(packet);
                 
-                gui.setChat("INVIATO ALIVE ");
                 Thread.sleep(1000);
                 
                 }
@@ -105,6 +107,10 @@ public class Client implements Runnable {
          
         
     }
+    /**
+     * Generate random port number
+     * @return 
+     */
     
     private int generatePort() {
         return new Random().nextInt(2000) + 8000;
@@ -128,27 +134,29 @@ public class Client implements Runnable {
     } 
     
     /**
-     * Set the ID number corresponding to the type of client selected
+     * Set the typeID number corresponding to the type of client selected
      * @param type the type of client selected
-     * @return 
+     * @return v[0] is a typeID while v[1] is the kW
      */
     
-    public static int setID(String type){
+    public static int[] setID(String type){
+        int v[]= new int[2];
         switch(type){
-            case "WASHING MACHINE": return 0;
-            case "FRIDGE": return 1;
-            case "LIGHT BULB":return 2;
-            case "THERMOSTAT": return 3;
-            case "OVEN":return 4;
-            case "FISH TANK":return 5;
-            case "TV":return 6;
-            default : return -1;
+            case "WASHING MACHINE [240w]": v[0]=0; v[1]=240;break; 
+            case "FRIDGE [305w]": v[0]=1;v[1]=305;break; 
+            case "LIGHT BULB [150w]":v[0]=2;v[1]=150;break; //All the lighting 
+            case "THERMOSTAT [750w]": v[0]=3;v[1]=750;break; 
+            case "OVEN [1500w]":v[0]=4;v[1]=1500;break;
+            case "FISH TANK [400w]":v[0]=5;v[1]=400;break; 
+            case "TV [150w]":v[0]=6;v[1]=150;break;
+            default : v[0]=-1;v[1]=0;
         }
+        return v;
     }
     
     
-    public void setAlive(){
-        alive=!alive;
+    public void setAlive(boolean b){
+        alive=b;
     }
     
 }
