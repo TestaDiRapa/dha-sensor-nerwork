@@ -23,6 +23,7 @@ public class ServerGUI {
     private JButton refreshButton;
 
     private static Server server;
+    private static JFrame frame;
 
     /**
      * Constructor, instantiates the server and starts it as a separate thread
@@ -50,7 +51,7 @@ public class ServerGUI {
      * @param args args
      */
     public static void main(String[] args) {
-        JFrame frame = new JFrame("ServerGUI");
+        frame = new JFrame("ServerGUI");
         frame.setContentPane(new ServerGUI().mainFrame);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
@@ -161,6 +162,8 @@ public class ServerGUI {
         mainFrame.setMinimumSize(new Dimension(300, 300));
         mainFrame.setPreferredSize(new Dimension(600, 300));
         final JScrollPane scrollPane1 = new JScrollPane();
+        scrollPane1.setMinimumSize(new Dimension(580, 230));
+        scrollPane1.setPreferredSize(new Dimension(580, 230));
         GridBagConstraints gbc;
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -168,9 +171,18 @@ public class ServerGUI {
         gbc.fill = GridBagConstraints.BOTH;
         mainFrame.add(scrollPane1, gbc);
         infoPanel = new JTextArea();
-        infoPanel.setMinimumSize(new Dimension(575, 275));
-        infoPanel.setPreferredSize(new Dimension(575, 275));
+        infoPanel.setMinimumSize(new Dimension(575, 225));
+        infoPanel.setPreferredSize(new Dimension(575, 225));
         scrollPane1.setViewportView(infoPanel);
+        refreshButton = new JButton();
+        refreshButton.setMaximumSize(new Dimension(40, 30));
+        refreshButton.setMinimumSize(new Dimension(40, 30));
+        refreshButton.setText("Refresh");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        mainFrame.add(refreshButton, gbc);
     }
 
     /**

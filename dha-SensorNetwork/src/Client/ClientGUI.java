@@ -12,7 +12,7 @@ public class ClientGUI extends javax.swing.JFrame {
     /**
      * Creates new form Client
      */
-    public ClientGUI() {
+    private ClientGUI() {
         initComponents();
         client= new Client(this);
         new Thread(client).start();
@@ -21,10 +21,8 @@ public class ClientGUI extends javax.swing.JFrame {
     }
 
     
-        public boolean checkONpower(){
-        if(OffButton.isSelected()){
-            return false;
-        }else return true;
+        boolean checkONpower(){
+            return !OffButton.isSelected();
     }
     
     /**
@@ -126,24 +124,19 @@ public class ClientGUI extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                new ClientGUI().setVisible(true);
-            }
-        });
+        java.awt.EventQueue.invokeLater(() -> new ClientGUI().setVisible(true));
     }
     /**
-     * This metod is used by client.java to set the information about the Device
+     * This method is used by client.java to set the information about the Device
      * @param s 
      */
-    
-    public void setClient(String s){
+
+    void setClient(String s){
         jClientInformation.setText(s);
     }
     
     /**
-     * This metod is used by client.java to set the information about the Server
+     * This method is used by client.java to set the information about the Server
      * @param s 
      */
     
@@ -152,7 +145,7 @@ public class ClientGUI extends javax.swing.JFrame {
     }
     
     /**
-     * This metod is used by client.java to set the information about the Device state
+     * This method is used by client.java to set the information about the Device state
      * @param s 
      */
     
