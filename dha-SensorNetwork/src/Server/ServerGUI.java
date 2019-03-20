@@ -20,8 +20,8 @@ import static Commons.Constants.*;
 public class ServerGUI {
     private JTextArea infoPanel;
     private JPanel mainFrame;
+    private JButton refreshButton;
 
-    private static JButton refreshButton;
     private static Server server;
     private static JFrame frame;
 
@@ -49,14 +49,6 @@ public class ServerGUI {
             @Override
             public void windowClosing(WindowEvent windowEvent) {
                 server.stopProtocol();
-            }
-        });
-
-        refreshButton.addActionListener(e -> {
-            try {
-                server.sendHello();
-            } catch (IOException e1) {
-                JOptionPane.showMessageDialog(null, "Error in sending the datagram!", "Error!", JOptionPane.ERROR_MESSAGE);
             }
         });
     }
@@ -168,6 +160,13 @@ public class ServerGUI {
         infoPanel.setMinimumSize(new Dimension(575, 275));
         infoPanel.setPreferredSize(new Dimension(575, 275));
         scrollPane1.setViewportView(infoPanel);
+        refreshButton.addActionListener(e -> {
+            try {
+                server.sendHello();
+            } catch (IOException e1) {
+                JOptionPane.showMessageDialog(null, "Error in sending the datagram!", "Error!", JOptionPane.ERROR_MESSAGE);
+            }
+        });
     }
 
     /**
