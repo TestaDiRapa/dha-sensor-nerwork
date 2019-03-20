@@ -9,7 +9,6 @@ import static Commons.Constants.ADDRESS;
 import static Commons.Constants.MAX;
 import static Commons.Constants.MULTICAST_PORT;
 import static Commons.ResponseParser.aliveMessage;
-
 import java.io.IOException;
 import java.net.*;
 import java.util.Random;
