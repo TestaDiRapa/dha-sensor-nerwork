@@ -64,7 +64,8 @@ public class Client implements Runnable {
                         port = generatePort();
                     }
                 }
-            //The comunication start
+             
+            //The communication start
             while (true){
             gui.setState("OFF");
             byte[] message = new byte[MAX];
@@ -129,7 +130,7 @@ public class Client implements Runnable {
     } 
     
     /**
-     * Set the typeID number corresponding to the type of client selected
+     * Set the typeID number and kw corresponding to the type of client selected
      * @param type the type of client selected
      * @return v[0] is a typeID while v[1] is the kW
      */
@@ -150,6 +151,10 @@ public class Client implements Runnable {
     }
     
     
+    /**
+     * Set the alive of Device, true=ON, false=OFF
+     * @param b 
+     */
     public void setAlive(boolean b){
         alive=b;
     }
