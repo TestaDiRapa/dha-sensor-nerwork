@@ -98,6 +98,11 @@ public class ClientGUI extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    
+    /**
+     * Set the "ON" button
+     * @param evt 
+     */
     private void jRadioButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton1ActionPerformed
 
         // TODO add your handling code here:
@@ -105,6 +110,10 @@ public class ClientGUI extends javax.swing.JFrame {
         client.setAlive(true);
     }//GEN-LAST:event_jRadioButton1ActionPerformed
 
+     /**
+     * Set the "OFF" button
+     * @param evt 
+     */
     private void jRadioButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton2ActionPerformed
         // TODO add your handling code here:
         jRadioButton1.setSelected(false);
@@ -146,15 +155,29 @@ public class ClientGUI extends javax.swing.JFrame {
             }
         });
     }
-    
+    /**
+     * This metod is used by client.java to set the information about the Device
+     * @param s 
+     */
     
     public void setClient(String s){
         jClientInformation.setText(s);
     }
     
+    /**
+     * This metod is used by client.java to set the information about the Server
+     * @param s 
+     */
+    
     public void setServer(String s){
         jServerInformation.setText(s);
     }
+    
+    /**
+     * This metod is used by client.java to set the information about the Device state
+     * @param s 
+     */
+    
     
     public void setState(String s){
         jState.setText(s);

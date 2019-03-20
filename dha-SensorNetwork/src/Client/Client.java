@@ -50,13 +50,21 @@ public class Client implements Runnable {
             typeID=setID(type)[0];
             kW=setID(type)[1];
             gui.setClient("This is the type selected: "+type);
-            
-            port=generatePort();
-            
+                        
             MulticastSocket multicastSocket = new MulticastSocket(MULTICAST_PORT);
-            multicastSocket.joinGroup(InetAddress.getByName(ADDRESS));
-            //Controllo connessione da parte del server
-            //while true xk in caso di disconnessione e poi riconnessione
+            multicastSocket.joinGroup(InetAddress.getByName(ADDRESS)); 
+            DatagramSocket socket;
+            //Generate the correct port
+             while(true){
+                    try{
+                        socket = new DatagramSocket(port);
+                        System.out.println(port);
+                        break;
+                    } catch (BindException e) {
+                        port = generatePort();
+                    }
+                }
+            //The comunication start
             while (true){
             gui.setState("OFF");
             byte[] message = new byte[MAX];
@@ -66,28 +74,15 @@ public class Client implements Runnable {
             
             int serverPort = isServer(messagePacket);
             
-
+            //If is the "HELLO" message by the server
             if(serverPort != -1){
                 InetAddress addressOutput=messagePacket.getAddress();
                 gui.setServer("Address server: "+addressOutput+" Port: "+serverPort);
  
-                DatagramSocket socket;
-                
-                
-                while(true){
-                    try{
-                        socket = new DatagramSocket(port);
-                        System.out.println(port);
-                        break;
-                    } catch (BindException e) {
-                        port = generatePort();
-                    }
-                }
-
+               
                 byte[] buffer = new byte[MAX];
                   
-                  //In caso di pausa del client alive diventa false e esce dal while
-                  //cosi ritorna nel primo while
+                 //ON by the device
                 while(alive){
                 gui.setState("ON");
                 message = aliveMessage(typeID);
