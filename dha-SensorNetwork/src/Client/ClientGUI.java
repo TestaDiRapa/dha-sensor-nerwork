@@ -16,10 +16,16 @@ public class ClientGUI extends javax.swing.JFrame {
         initComponents();
         client= new Client(this);
         new Thread(client).start();
-        jRadioButton2.setSelected(true);
+        OffButton.setSelected(true);
 
     }
 
+    
+        public boolean checkONpower(){
+        if(OffButton.isSelected()){
+            return false;
+        }else return true;
+    }
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -30,13 +36,12 @@ public class ClientGUI extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        buttonGroup1 = new javax.swing.ButtonGroup();
-        buttonGroup2 = new javax.swing.ButtonGroup();
+        OnOffGroup = new javax.swing.ButtonGroup();
         jServerInformation = new javax.swing.JLabel();
         jClientInformation = new javax.swing.JLabel();
-        jRadioButton1 = new javax.swing.JRadioButton();
-        jRadioButton2 = new javax.swing.JRadioButton();
         jState = new javax.swing.JLabel();
+        OnButton = new javax.swing.JRadioButton();
+        OffButton = new javax.swing.JRadioButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -44,43 +49,35 @@ public class ClientGUI extends javax.swing.JFrame {
 
         jClientInformation.setText("Client");
 
-        jRadioButton1.setText("ON");
-        jRadioButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton1ActionPerformed(evt);
-            }
-        });
-
-        jRadioButton2.setText("OFF");
-        jRadioButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton2ActionPerformed(evt);
-            }
-        });
-
         jState.setText("State");
+
+        OnOffGroup.add(OnButton);
+        OnButton.setText("ON");
+
+        OnOffGroup.add(OffButton);
+        OffButton.setText("OFF");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(83, 83, 83)
-                .addComponent(jRadioButton1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 148, Short.MAX_VALUE)
-                .addComponent(jRadioButton2)
-                .addGap(83, 83, 83))
-            .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(32, 32, 32)
+                        .addComponent(jState))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jServerInformation, javax.swing.GroupLayout.DEFAULT_SIZE, 341, Short.MAX_VALUE)
-                            .addComponent(jClientInformation, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(32, 32, 32)
-                        .addComponent(jState)))
+                            .addComponent(jClientInformation, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(92, 92, 92)
+                .addComponent(OnButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 134, Short.MAX_VALUE)
+                .addComponent(OffButton)
+                .addGap(88, 88, 88))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -90,38 +87,17 @@ public class ClientGUI extends javax.swing.JFrame {
                 .addComponent(jClientInformation, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(37, 37, 37)
                 .addComponent(jState)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 166, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 165, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jRadioButton1)
-                    .addComponent(jRadioButton2))
-                .addGap(29, 29, 29))
+                    .addComponent(OnButton)
+                    .addComponent(OffButton))
+                .addGap(30, 30, 30))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     
-    /**
-     * Set the "ON" button
-     * @param evt 
-     */
-    private void jRadioButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton1ActionPerformed
-
-        // TODO add your handling code here:
-        jRadioButton2.setSelected(false);
-        client.setAlive(true);
-    }//GEN-LAST:event_jRadioButton1ActionPerformed
-
-     /**
-     * Set the "OFF" button
-     * @param evt 
-     */
-    private void jRadioButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton2ActionPerformed
-        // TODO add your handling code here:
-        jRadioButton1.setSelected(false);
-        client.setAlive(false);
-    }//GEN-LAST:event_jRadioButton2ActionPerformed
-
     /**
      * @param args the command line arguments
      */
@@ -188,11 +164,10 @@ public class ClientGUI extends javax.swing.JFrame {
    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.ButtonGroup buttonGroup1;
-    private javax.swing.ButtonGroup buttonGroup2;
+    private javax.swing.JRadioButton OffButton;
+    private javax.swing.JRadioButton OnButton;
+    private javax.swing.ButtonGroup OnOffGroup;
     private javax.swing.JLabel jClientInformation;
-    private javax.swing.JRadioButton jRadioButton1;
-    private javax.swing.JRadioButton jRadioButton2;
     private javax.swing.JLabel jServerInformation;
     private javax.swing.JLabel jState;
     // End of variables declaration//GEN-END:variables

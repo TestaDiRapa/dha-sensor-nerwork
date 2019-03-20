@@ -23,7 +23,6 @@ public class Client implements Runnable {
     private int typeID;
     private String addressOutput;
     private int portOutput;
-    private boolean alive=false;
     private final ClientGUI gui;
     private int port;
     private int kW;
@@ -80,7 +79,7 @@ public class Client implements Runnable {
                     gui.setServer("Address server: "+addressOutput+" Port: "+serverPort);
 
                      //ON by the device
-                    while(alive){
+                    while(gui.checkONpower()){
                         gui.setState("ON");
                         message = aliveMessage(typeID, kW);
 
@@ -145,14 +144,7 @@ public class Client implements Runnable {
         return v;
     }
     
-    
-    /**
-     * Set the alive of Device, true=ON, false=OFF
-     * @param b 
-     */
-    public void setAlive(boolean b){
-        alive=b;
-    }
+   
     
 }
 
