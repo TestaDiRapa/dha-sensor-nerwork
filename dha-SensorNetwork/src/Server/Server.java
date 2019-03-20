@@ -21,6 +21,7 @@ public class Server implements Runnable{
     private AliveChecker aliveChecker;
     private MulticastListener multicastListener;
     private boolean running = true;
+    private MulticastSocket multicastSocket;
 
     /**
      * Constructor
@@ -37,7 +38,7 @@ public class Server implements Runnable{
     @Override
     public void run() {
         try {
-            MulticastSocket multicastSocket = new MulticastSocket(MULTICAST_PORT);
+            multicastSocket = new MulticastSocket(MULTICAST_PORT);
 
             aliveChecker = new AliveChecker(this);
             multicastListener = new MulticastListener(this, multicastSocket);
@@ -46,7 +47,7 @@ public class Server implements Runnable{
             new Thread(multicastListener).start();
 
             while(running) {
-                sendHello(multicastSocket);
+                sendHello();
                 //Mettere 20000
                 Thread.sleep(5000);
                 updateGui();
@@ -63,7 +64,7 @@ public class Server implements Runnable{
     /**
      * Closes all the sub-threads and itself
      */
-    public void stopProtocol() {
+    void stopProtocol() {
         aliveChecker.stopProtocol();
         multicastListener.stopProtocol();
         running = false;
@@ -71,13 +72,12 @@ public class Server implements Runnable{
 
     /**
      * Creates the HELLO message and sends it in multicast
-     * @param socket the multicast socket
      * @throws IOException exception
      */
-    private synchronized void sendHello(MulticastSocket socket) throws IOException {
+    public synchronized void sendHello() throws IOException {
         byte [] payload = ("HELLO"+PORT).getBytes(StandardCharsets.UTF_8);
         DatagramPacket packet = new DatagramPacket(payload, payload.length, InetAddress.getByName(ADDRESS), MULTICAST_PORT);
-        socket.send(packet);
+        multicastSocket.send(packet);
     }
 
     /**
