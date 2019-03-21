@@ -7,6 +7,7 @@ Il server invia periodicamente il messaggio di HELLO, o in modo asincrono manual
 Nello stesso messaggio di HELLO, il server invia anche la sua porta di connessione e la potenza massima disponibile.
 Il client, una volta ricevuto il messaggio di HELLO e aver controllato che la sua potenza di accensione sia minore di quella disponibile, invia ogni secondo il messaggio di ALIVE unicast al server. 
 In caso di conflitti tra client che cercano di accedere, ma simultaneamente causerebbero un blackout (perchè la potenza consumata diventerebbe maggiore di quella massima consentita), si è pensato di risolvere questa possibile situazione utilizzando il protocollo "CSMA".
+il protocollo "CSMA" è stato applicato in modo che se si verificasse la situazione precedente, al successivo messaggio di HELLO i device in questione verranno messi in uno stato wait e riavviati dopo un tempo che cresce esponenzialmente ai fallimenti.
 Il codice è corredato di Javadoc ed è possibile modificare la porta del server e la potenza massima consentita modificando i valori nella classe "Constants" nel package "Commons".
 
 Come prima operazione, avviare la ServerGUI. In seguito avviare la ClientGUI ogni qual volta si desidera instanziare un nuovo dispositivo.
