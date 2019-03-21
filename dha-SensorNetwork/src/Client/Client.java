@@ -86,7 +86,7 @@ public class Client implements Runnable {
                 if(serverPort != -1 && freeKW>=kW){
                     InetAddress addressOutput=messagePacket.getAddress();
                     gui.setServer("Address server: "+addressOutput+" Port: "+serverPort);
-
+                    //CSMA Protocol
                     csma.check();
 
                      //ON by the device

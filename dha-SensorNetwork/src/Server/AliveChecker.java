@@ -5,6 +5,7 @@ import java.net.*;
 
 import static Commons.Constants.*;
 import static Commons.ResponseParser.*;
+import javax.swing.JOptionPane;
 
 /**
  * This thread checks for the unicast "ALIVE" messages from the devices. Has an instance of the server
@@ -35,6 +36,9 @@ public class AliveChecker implements Runnable {
                     server.updateAliveDevice(bufferPacket.getAddress(), bufferPacket.getPort(), type, watts);
                 }
             }
+        } catch (BindException e) {
+            JOptionPane.showMessageDialog(null, "Port already in use!\nIs the server started already?", "Error!", JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
         } catch (IOException e) {
             e.printStackTrace();
         }
