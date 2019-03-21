@@ -81,7 +81,7 @@ public class Client implements Runnable {
                 if(serverPort != -1 && freeKW != null && freeKW>=kW){
                     InetAddress addressOutput=messagePacket.getAddress();
                     gui.setServer("Address server: "+addressOutput+" Port: "+serverPort);
-
+                    //CSMA Protocol
                     csma.check();
 
                     while(gui.checkONPower() && !csma.disconnect()){
@@ -90,6 +90,7 @@ public class Client implements Runnable {
 
                         DatagramPacket packet = new DatagramPacket(message, message.length, addressOutput, serverPort);
                         socket.send(packet);
+                        gui.setTextArea("ALIVE MESSAGE SENT FROM "+type+"\n");
 
                         Thread.sleep(1000);
                     }
