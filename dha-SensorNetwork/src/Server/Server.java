@@ -7,6 +7,7 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,7 +53,7 @@ public class Server implements Runnable{
 
             while(running) {
                 sendHello();
-                //Mettere 20000
+
                 Thread.sleep(20000);
                 updateGui();
 
@@ -103,8 +104,11 @@ public class Server implements Runnable{
 
             int usedPower = 0;
             for(Map.Entry<Identifier, Device> e : devices.entrySet()) {
-                usedPower += e.getValue().getPowerConsumption();
+                if((Instant.now().toEpochMilli() - e.getValue().getLastCommunication().toEpochMilli() <= 30000))
+                    usedPower += e.getValue().getPowerConsumption();
             }
+
+            freePower = TOTAL_POWER - usedPower;
 
         }
         updateGui();

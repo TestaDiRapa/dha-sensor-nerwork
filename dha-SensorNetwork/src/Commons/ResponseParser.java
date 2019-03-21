@@ -53,10 +53,12 @@ public class ResponseParser {
 
     public static int helloGetFreeWatts(DatagramPacket packet) {
         String payload = new String(packet.getData());
+        System.out.println(payload);
         if(payload.matches("HELLO[0-9]{4,6}%[0-9]{1,4}")){
             Pattern p = Pattern.compile("(HELLO)([0-9]{4,6})%([0-9]{1,4})");
             Matcher m = p.matcher(payload);
             m.find();
+            System.out.println(m.group(3));
             return Integer.parseInt(m.group(3));
         }
         return -1;
