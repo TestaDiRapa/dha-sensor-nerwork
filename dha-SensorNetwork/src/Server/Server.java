@@ -20,7 +20,6 @@ public class Server implements Runnable{
     private final ServerGUI gui;
 
     private AliveChecker aliveChecker;
-    private MulticastListener multicastListener;
     private boolean running = true;
     private MulticastSocket multicastSocket;
     private int freePower = TOTAL_POWER;
@@ -43,10 +42,10 @@ public class Server implements Runnable{
             multicastSocket = new MulticastSocket(MULTICAST_PORT);
 
             aliveChecker = new AliveChecker(this);
-            multicastListener = new MulticastListener(this, multicastSocket);
 
             new Thread(aliveChecker).start();
-            new Thread(multicastListener).start();
+
+            updateGui();
 
             while(running) {
                 sendHello();
@@ -68,7 +67,6 @@ public class Server implements Runnable{
      */
     void stopProtocol() {
         aliveChecker.stopProtocol();
-        multicastListener.stopProtocol();
         running = false;
     }
 
@@ -77,11 +75,9 @@ public class Server implements Runnable{
      * @throws IOException exception
      */
     synchronized void sendHello() throws IOException {
-        if((TOTAL_POWER-freePower) <= THRESHOLD) {
-            byte[] payload = createHelloMessage(PORT, freePower);
-            DatagramPacket packet = new DatagramPacket(payload, payload.length, InetAddress.getByName(ADDRESS), MULTICAST_PORT);
-            multicastSocket.send(packet);
-        }
+        byte[] payload = createHelloMessage(PORT, freePower);
+        DatagramPacket packet = new DatagramPacket(payload, payload.length, InetAddress.getByName(ADDRESS), MULTICAST_PORT);
+        multicastSocket.send(packet);
     }
 
     /**
@@ -103,7 +99,7 @@ public class Server implements Runnable{
 
             int usedPower = 0;
             for(Map.Entry<Identifier, Device> e : devices.entrySet()) {
-                if((Instant.now().toEpochMilli() - e.getValue().getLastCommunication().toEpochMilli() <= 30000))
+                if((Instant.now().toEpochMilli() - e.getValue().getLastCommunication().toEpochMilli() <= DISCONNECT_TIME))
                     usedPower += e.getValue().getPowerConsumption();
             }
 

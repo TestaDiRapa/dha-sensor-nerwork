@@ -51,15 +51,15 @@ public class ResponseParser {
         return -1;
     }
 
-    public static int helloGetFreeWatts(DatagramPacket packet) {
+    public static Integer helloGetFreeWatts(DatagramPacket packet) {
         String payload = new String(packet.getData());
-        if(payload.matches("HELLO[0-9]{4,6}%[0-9]{1,4}.*")){
-            Pattern p = Pattern.compile("(HELLO)([0-9]{4,6})%([0-9]{1,4}).*");
+        if(payload.matches("HELLO[0-9]{4,6}%-?[0-9]{1,4}.*")){
+            Pattern p = Pattern.compile("(HELLO)([0-9]{4,6})%(-?[0-9]{1,4}).*");
             Matcher m = p.matcher(payload);
             m.find();
             return Integer.parseInt(m.group(3));
         }
-        return -1;
+        return null;
     }
 
 

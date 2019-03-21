@@ -8,7 +8,6 @@ package Client;
 import static Commons.Constants.ADDRESS;
 import static Commons.Constants.MAX;
 import static Commons.Constants.MULTICAST_PORT;
-import Commons.ResponseParser;
 import static Commons.ResponseParser.aliveMessage;
 import static Commons.ResponseParser.helloGetFreeWatts;
 import java.io.IOException;
@@ -53,7 +52,10 @@ public class Client implements Runnable {
             gui.setClient("This is the type selected: "+type);
                         
             MulticastSocket multicastSocket = new MulticastSocket(MULTICAST_PORT);
-            multicastSocket.joinGroup(InetAddress.getByName(ADDRESS)); 
+            multicastSocket.joinGroup(InetAddress.getByName(ADDRESS));
+
+            CSMAManager csma = new CSMAManager(multicastSocket);
+
             DatagramSocket socket;
             //Generate the correct port
              while(true){
@@ -73,18 +75,22 @@ public class Client implements Runnable {
                 byte[] message = new byte[MAX];
                 DatagramPacket messagePacket = new DatagramPacket(message, message.length);
 
+                csma.csmaWait();
+
                 multicastSocket.receive(messagePacket);
 
                 int serverPort = isServer(messagePacket);
                 freeKW=helloGetFreeWatts(messagePacket);
-                System.out.println("Free KW"+freeKW);
+
                 //If is the "HELLO" message by the server
                 if(serverPort != -1 && freeKW>=kW){
                     InetAddress addressOutput=messagePacket.getAddress();
                     gui.setServer("Address server: "+addressOutput+" Port: "+serverPort);
 
+                    csma.check();
+
                      //ON by the device
-                    while(gui.checkONpower()){
+                    while(gui.checkONpower() && !csma.disconnect()){
                         gui.setState("ON");
                         message = aliveMessage(typeID, kW);
 
