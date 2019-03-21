@@ -19,3 +19,10 @@ Nel caso in cui invece arrivasse il messaggio di ALIVE prima dello scadere dei 3
 Il client potrà anche spegnersi selezionando il jRadioButton "OFF" non inviando più i messaggi di ALIVE al server.
 Come spiegato nel funzionamento del server, il client potrà ricollegarsi prima dei 30 secondi dall'ultimo ALIVE inviato, oppure dovrà aspettare un nuovo messaggio di HELLO da parte del server.
 
+Nell'interfaccia del Client, una volta selezionato il dispositivo IOT da connettere, è possibile visualizzare le seguenti informazioni:
+- indirizzo e porta del server, una volta ricevuto il messaggio di HELLO; 
+- il tipo di dispositivo IOT scelto;
+- lo stato del dispositivo;
+- la conferma dell'invio dell'ALIVE message, una volta iniziata la comunicazione col server.
+
+
