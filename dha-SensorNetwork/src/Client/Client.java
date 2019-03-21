@@ -8,7 +8,9 @@ package Client;
 import static Commons.Constants.ADDRESS;
 import static Commons.Constants.MAX;
 import static Commons.Constants.MULTICAST_PORT;
+import Commons.ResponseParser;
 import static Commons.ResponseParser.aliveMessage;
+import static Commons.ResponseParser.helloGetFreeWatts;
 import java.io.IOException;
 import java.net.*;
 import java.util.Random;
@@ -26,6 +28,7 @@ public class Client implements Runnable {
     private final ClientGUI gui;
     private int port;
     private int kW;
+    private int freeKW;
     
     public Client(ClientGUI gui){
         this.gui=gui;
@@ -72,9 +75,10 @@ public class Client implements Runnable {
                 multicastSocket.receive(messagePacket);
 
                 int serverPort = isServer(messagePacket);
-
+                freeKW=helloGetFreeWatts(messagePacket);
+                System.out.println("Free KW"+freeKW);
                 //If is the "HELLO" message by the server
-                if(serverPort != -1){
+                if(serverPort != -1 && freeKW<kW){
                     InetAddress addressOutput=messagePacket.getAddress();
                     gui.setServer("Address server: "+addressOutput+" Port: "+serverPort);
 
