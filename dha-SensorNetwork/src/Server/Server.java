@@ -50,7 +50,7 @@ public class Server implements Runnable{
             while(running) {
                 sendHello();
 
-                Thread.sleep(20000);
+                Thread.sleep(2500);
                 updateGui();
 
             }
@@ -74,7 +74,13 @@ public class Server implements Runnable{
      * Creates the HELLO message and sends it in multicast
      * @throws IOException exception
      */
-    synchronized void sendHello() throws IOException {
+    private synchronized void sendHello() throws IOException {
+        int usedPower = 0;
+        for(Map.Entry<Identifier, Device> e : devices.entrySet()) {
+            if((Instant.now().toEpochMilli() - e.getValue().getLastCommunication().toEpochMilli() <= DISCONNECT_TIME))
+                usedPower += e.getValue().getPowerConsumption();
+        }
+        freePower = TOTAL_POWER - usedPower;
         byte[] payload = createHelloMessage(PORT, freePower);
         DatagramPacket packet = new DatagramPacket(payload, payload.length, InetAddress.getByName(ADDRESS), MULTICAST_PORT);
         multicastSocket.send(packet);

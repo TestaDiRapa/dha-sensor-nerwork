@@ -6,6 +6,11 @@
 package Client;
 
 
+import javax.swing.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.IOException;
+
 public class ClientGUI extends javax.swing.JFrame {
     private static Client client;
 
@@ -18,12 +23,17 @@ public class ClientGUI extends javax.swing.JFrame {
         new Thread(client).start();
         OffButton.setSelected(true);
 
+        OnButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                setState("WAITING FOR DISCOVERY FROM THE SERVER!");
+            }
+        });
+
     }
 
     
-        boolean checkONpower(){
-            return !OffButton.isSelected();
-    }
+        boolean checkONPower(){ return !OffButton.isSelected();    }
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -149,7 +159,7 @@ public class ClientGUI extends javax.swing.JFrame {
      * @param s 
      */
     
-    
+
     public void setState(String s){
         jState.setText(s);
     }

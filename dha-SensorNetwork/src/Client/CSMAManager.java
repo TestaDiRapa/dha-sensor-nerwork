@@ -3,37 +3,41 @@ package Client;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.MulticastSocket;
+import java.time.Instant;
 import java.util.Random;
 
 import static Commons.Constants.MAX;
 import static Commons.ResponseParser.helloGetFreeWatts;
 
-public class CSMAManager {
+class CSMAManager {
 
     private boolean disconnect;
-    private int wait = 0;
+    private int wait = 2;
+    private boolean stop;
     private MulticastSocket socket;
 
     CSMAManager(MulticastSocket socket) {
         this.socket = socket;
     }
 
-    public void check() {
+    void check() {
+        stop = false;
         new Thread(() -> {
             disconnect = false;
             byte[] message = new byte[MAX];
             DatagramPacket messagePacket = new DatagramPacket(message, message.length);
             try {
-                Integer res;
-                do{
-                    socket.receive(messagePacket);
-                    res = helloGetFreeWatts(messagePacket);
-                    System.out.println(res);
-                }while (res == null);
+                do {
+                    Integer res;
+                    do {
+                        socket.receive(messagePacket);
+                        //System.out.println("CSMA: " + new String(messagePacket.getData()));
+                        res = helloGetFreeWatts(messagePacket);
+                    } while (res == null);
 
-                disconnect = (res < 0);
-                if(disconnect) wait++;
-                else wait = 0;
+                    disconnect = (res < 0);
+                    if (disconnect) wait++;
+                } while(!disconnect && !stop);
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -41,9 +45,26 @@ public class CSMAManager {
         }).start();
     }
 
+    void stopChecking() {stop = true;}
+
     boolean disconnect() {return disconnect;}
 
-    void csmaWait() throws InterruptedException {
-        if(wait > 0) Thread.sleep(new Random().nextInt(wait*10000));
+    DatagramPacket csmaWait() throws IOException {
+        byte[] message = new byte[MAX];
+        DatagramPacket messagePacket = new DatagramPacket(message, message.length);
+
+        if(wait > 2){
+            socket.receive(messagePacket);
+            return messagePacket;
+        }
+
+        long start = Instant.now().toEpochMilli();
+        do{
+            socket.receive(messagePacket);
+        }while((Instant.now().toEpochMilli() - start) < wait*10000);
+
+        return messagePacket;
     }
+
+    void resetWait() {wait = 2;}
 }

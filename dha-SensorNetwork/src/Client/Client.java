@@ -27,7 +27,7 @@ public class Client implements Runnable {
     private final ClientGUI gui;
     private int port;
     private int kW;
-    private int freeKW;
+    private Integer freeKW;
     
     public Client(ClientGUI gui){
         this.gui=gui;
@@ -50,18 +50,19 @@ public class Client implements Runnable {
             typeID=setID(type)[0];
             kW=setID(type)[1];
             gui.setClient("This is the type selected: "+type);
+            gui.setState("OFF");
                         
             MulticastSocket multicastSocket = new MulticastSocket(MULTICAST_PORT);
             multicastSocket.joinGroup(InetAddress.getByName(ADDRESS));
 
             CSMAManager csma = new CSMAManager(multicastSocket);
+            csma.csmaWait();
 
             DatagramSocket socket;
             //Generate the correct port
              while(true){
                     try{
                         socket = new DatagramSocket(port);
-                        System.out.println(port);
                         break;
                     } catch (BindException e) {
                         port = generatePort();
@@ -69,28 +70,21 @@ public class Client implements Runnable {
                 }
 
             //The communication starts
-            String status = "WAITING FOR THE COUNTER TO BE READY!";
+            byte[] message;
             while (true){
-                gui.setState(status);
-                byte[] message = new byte[MAX];
-                DatagramPacket messagePacket = new DatagramPacket(message, message.length);
-
-                csma.csmaWait();
-
-                multicastSocket.receive(messagePacket);
+                DatagramPacket messagePacket = csma.csmaWait();
 
                 int serverPort = isServer(messagePacket);
                 freeKW=helloGetFreeWatts(messagePacket);
 
                 //If is the "HELLO" message by the server
-                if(serverPort != -1 && freeKW>=kW){
+                if(serverPort != -1 && freeKW != null && freeKW>=kW){
                     InetAddress addressOutput=messagePacket.getAddress();
                     gui.setServer("Address server: "+addressOutput+" Port: "+serverPort);
 
                     csma.check();
 
-                     //ON by the device
-                    while(gui.checkONpower() && !csma.disconnect()){
+                    while(gui.checkONPower() && !csma.disconnect()){
                         gui.setState("ON");
                         message = aliveMessage(typeID, kW);
 
@@ -99,9 +93,17 @@ public class Client implements Runnable {
 
                         Thread.sleep(1000);
                     }
+
+                    csma.stopChecking();
+
+                    if(!gui.checkONPower()){
+                        csma.resetWait();
+                        gui.setState("OFF");
+                    }
+                    else gui.setState("ACTIVATING CSMA PROTOCOL");
                 }
-                else if(serverPort != -1){
-                    status = "WAITING TO HAVE ENOUGH FREE POWER";
+                else if(serverPort != -1 && !csma.disconnect()){
+                    if(gui.checkONPower()) gui.setState("WAITING TO HAVE ENOUGH FREE POWER");
                 }
             }
    
@@ -111,21 +113,21 @@ public class Client implements Runnable {
          
         
     }
+
     /**
      * Generate random port number
-     * @return 
+     * @return a port number between 8000 and 9999
      */
-    
     private int generatePort() {
         return new Random().nextInt(2000) + 8000;
     }
     
     /**
-     * Controll if the message is from the server, takes the port number from the message content
+     * Control if the message is from the server, takes the port number from the message content
      * @param packet the packet from the server
-     * @return 
+     * @return the port number or -1
      */
-    public static int isServer(DatagramPacket packet){
+    private static int isServer(DatagramPacket packet){
         
         String payload = new String(packet.getData());
         if(payload.matches("HELLO[0-9]{4}.*")){
@@ -143,10 +145,10 @@ public class Client implements Runnable {
      * @return v[0] is a typeID while v[1] is the kW
      */
     
-    public static int[] setID(String type){
-        int v[]= new int[2];
+    private static int[] setID(String type){
+        int[] v = new int[2];
         switch(type){
-            case "WASHING MACHINE [240w]": v[0]=0; v[1]=240;break; 
+            case "WASHING MACHINE [240w]": v[0]=0; v[1]=240;break;
             case "FRIDGE [305w]": v[0]=1;v[1]=305;break; 
             case "LIGHT BULB [150w]":v[0]=2;v[1]=150;break; //All the lighting 
             case "THERMOSTAT [750w]": v[0]=3;v[1]=750;break; 

@@ -35,12 +35,7 @@ public class ServerGUI {
         refreshButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                try {
-                    server.sendHello();
-                    server.updateGui();
-                } catch (IOException e1) {
-                    JOptionPane.showMessageDialog(null, "Error in sending the datagram!", "Error!", JOptionPane.ERROR_MESSAGE);
-                }
+                server.updateGui();
             }
         });
     }
@@ -74,7 +69,9 @@ public class ServerGUI {
         LinkedList<Device> devicesList = new LinkedList<Device>(devices);
         Collections.sort(devicesList);
         StringBuilder tmp = new StringBuilder();
-        tmp.append("Power used: " + (TOTAL_POWER-freePower) + "W of " + TOTAL_POWER + " W\n");
+        tmp.append("Power used: " + (TOTAL_POWER - freePower) + "W of " + TOTAL_POWER + " W");
+        if (freePower < 0) tmp.append(" WARNING! DISCONNECT SOMETHING!");
+        tmp.append("\n");
         for (Device d : devicesList) {
             tmp.append(parseType(d.getType())).append(":\n\tLast confirm: ").append(parseInterval(d.getLastCommunication())).append("\n\n");
         }
