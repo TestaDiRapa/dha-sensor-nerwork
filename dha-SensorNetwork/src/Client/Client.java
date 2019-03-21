@@ -96,6 +96,7 @@ public class Client implements Runnable {
 
                         DatagramPacket packet = new DatagramPacket(message, message.length, addressOutput, serverPort);
                         socket.send(packet);
+                        gui.setTextArea("ALIVE MESSAGE SENT FROM "+type+"\n");
 
                         Thread.sleep(1000);
                     }
