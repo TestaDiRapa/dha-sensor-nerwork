@@ -1,12 +1,9 @@
 package Server;
 
-import Commons.ResponseParser;
-
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
-import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,7 +23,7 @@ public class Server implements Runnable{
     private MulticastListener multicastListener;
     private boolean running = true;
     private MulticastSocket multicastSocket;
-    private int freePower;
+    private int freePower = TOTAL_POWER;
 
     /**
      * Constructor
@@ -79,10 +76,12 @@ public class Server implements Runnable{
      * Creates the HELLO message and sends it in multicast
      * @throws IOException exception
      */
-    public synchronized void sendHello() throws IOException {
-        byte [] payload = createHelloMessage(PORT, freePower);
-        DatagramPacket packet = new DatagramPacket(payload, payload.length, InetAddress.getByName(ADDRESS), MULTICAST_PORT);
-        multicastSocket.send(packet);
+    synchronized void sendHello() throws IOException {
+        if((TOTAL_POWER-freePower) <= THRESHOLD) {
+            byte[] payload = createHelloMessage(PORT, freePower);
+            DatagramPacket packet = new DatagramPacket(payload, payload.length, InetAddress.getByName(ADDRESS), MULTICAST_PORT);
+            multicastSocket.send(packet);
+        }
     }
 
     /**
@@ -120,7 +119,7 @@ public class Server implements Runnable{
     void updateGui() {
         synchronized (gui) {
             synchronized (devices) {
-                gui.updateDevices(devices.values());
+                gui.updateDevices(devices.values(), freePower);
             }
         }
     }

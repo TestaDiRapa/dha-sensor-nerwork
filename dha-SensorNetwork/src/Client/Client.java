@@ -45,7 +45,7 @@ public class Client implements Runnable {
     public void run(){
         
         try {
-            Object[] possibleType={"WASHING MACHINE [240w]","FRIDGE [305w]","LIGHT BULB [150w]","THERMOSTAT [750w]","OVEN [1500]","FISH TANK [400w]","TV [150w]"};
+            Object[] possibleType={"WASHING MACHINE [240w]","FRIDGE [305w]","LIGHT BULB [150w]","THERMOSTAT [750w]","OVEN [1500w]","FISH TANK [400w]","TV [150w]"};
             String type;
             type=(String)JOptionPane.showInputDialog(null,"Possible Type", "Choise",JOptionPane.QUESTION_MESSAGE,null,possibleType,"TV");
             typeID=setID(type)[0];
@@ -67,8 +67,9 @@ public class Client implements Runnable {
                 }
 
             //The communication starts
+            String status = "WAITING FOR THE COUNTER TO BE READY!";
             while (true){
-                gui.setState("OFF");
+                gui.setState(status);
                 byte[] message = new byte[MAX];
                 DatagramPacket messagePacket = new DatagramPacket(message, message.length);
 
@@ -78,7 +79,7 @@ public class Client implements Runnable {
                 freeKW=helloGetFreeWatts(messagePacket);
                 System.out.println("Free KW"+freeKW);
                 //If is the "HELLO" message by the server
-                if(serverPort != -1 && freeKW<kW){
+                if(serverPort != -1 && freeKW>=kW){
                     InetAddress addressOutput=messagePacket.getAddress();
                     gui.setServer("Address server: "+addressOutput+" Port: "+serverPort);
 
@@ -92,6 +93,9 @@ public class Client implements Runnable {
 
                         Thread.sleep(1000);
                     }
+                }
+                else if(serverPort != -1){
+                    status = "WAITING TO HAVE ENOUGH FREE POWER";
                 }
             }
    

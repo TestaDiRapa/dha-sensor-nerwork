@@ -9,6 +9,7 @@ public interface Constants {
     int MAX = 65000;
 
     int TOTAL_POWER = 3000;
+    int THRESHOLD = 2700;
 
     int WASHING_MACHINE = 0;
     int FRIDGE = 1;

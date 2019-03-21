@@ -70,10 +70,10 @@ public class ServerGUI {
      *
      * @param devices a collection of Device objects
      */
-    void updateDevices(Collection<Device> devices) {
+    void updateDevices(Collection<Device> devices, int freePower) {
         LinkedList<Device> devicesList = new LinkedList<Device>(devices);
         Collections.sort(devicesList);
-        infoPanel.setText("");
+        infoPanel.setText("Power used: " + (TOTAL_POWER-freePower) + "W of " + TOTAL_POWER + " W\n");
         StringBuilder tmp = new StringBuilder();
         for (Device d : devicesList) {
             tmp.append(parseType(d.getType())).append(":\n\tLast confirm: ").append(parseInterval(d.getLastCommunication())).append("\n\n");
