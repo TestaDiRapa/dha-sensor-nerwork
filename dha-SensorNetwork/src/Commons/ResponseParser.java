@@ -31,8 +31,8 @@ public class ResponseParser {
     public static int aliveGetPowerConsumption(DatagramPacket packet){
         String payload = new String(packet.getData());
 
-        if(payload.matches("ALIVE[0-9]%[0-9]+.*")){
-            Pattern p = Pattern.compile("(ALIVE)([0-9])%([0-9]+)(.*)");
+        if(payload.matches("ALIVE[0-9]%[0-9]+%.*")){
+            Pattern p = Pattern.compile("(ALIVE)([0-9])%([0-9]+)(%.*)");
             Matcher m = p.matcher(payload);
             m.find();
             return Integer.parseInt(m.group(3));
@@ -68,7 +68,7 @@ public class ResponseParser {
     }
 
     public static byte[] aliveMessage(int type, int usedWatts) {
-        return ("ALIVE" + type + "%" + usedWatts).getBytes(StandardCharsets.UTF_8);
+        return ("ALIVE" + type + "%" + usedWatts + "%").getBytes(StandardCharsets.UTF_8);
     }
 
     public static byte[] createHelloMessage(int port, int freeWatts) {return ("HELLO"+port+"%"+freeWatts).getBytes(StandardCharsets.UTF_8);}
