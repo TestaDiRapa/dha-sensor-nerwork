@@ -5,11 +5,10 @@
  */
 package Client;
 
-
-import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class ClientGUI extends javax.swing.JFrame {
     private static Client client;
@@ -30,6 +29,12 @@ public class ClientGUI extends javax.swing.JFrame {
             }
         });
 
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                client.stopProtocol();
+            }
+        });
     }
 
     

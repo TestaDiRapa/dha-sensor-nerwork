@@ -6,35 +6,31 @@
 package Client;
 
 import static Commons.Constants.ADDRESS;
-import static Commons.Constants.MAX;
 import static Commons.Constants.MULTICAST_PORT;
 import static Commons.ResponseParser.aliveMessage;
 import static Commons.ResponseParser.helloGetFreeWatts;
 import java.io.IOException;
 import java.net.*;
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
 
 public class Client implements Runnable {
-    
-    private int typeID;
+
     private final ClientGUI gui;
     private int port;
-    private int kW;
-    private Integer freeKW;
-    
-    public Client(ClientGUI gui){
+    private boolean stop = false;
+    private CSMAManager csma;
+
+    Client(ClientGUI gui){
         this.gui=gui;
     }
     
     
    
    /**
-     * Basically the main.Choise the type of type,opens the multicast socket and wait the message of server.
+     * Basically the main.Choose the type of type,opens the multicast socket and wait the message of server.
      * Client periodically sends the "alive" message to the server.
      */
     
@@ -45,15 +41,15 @@ public class Client implements Runnable {
             Object[] possibleType={"WASHING MACHINE [240w]","FRIDGE [305w]","LIGHT BULB [150w]","THERMOSTAT [750w]","OVEN [1500w]","FISH TANK [400w]","TV [150w]"};
             String type;
             type=(String)JOptionPane.showInputDialog(null,"Possible Type", "Choise",JOptionPane.QUESTION_MESSAGE,null,possibleType,"TV");
-            typeID=setID(type)[0];
-            kW=setID(type)[1];
+            int typeID = setID(type)[0];
+            int kW = setID(type)[1];
             gui.setClient("This is the type selected: "+type);
             gui.setState("OFF");
                         
             MulticastSocket multicastSocket = new MulticastSocket(MULTICAST_PORT);
             multicastSocket.joinGroup(InetAddress.getByName(ADDRESS));
 
-            CSMAManager csma = new CSMAManager(multicastSocket);
+            csma = new CSMAManager(multicastSocket);
 
             DatagramSocket socket;
             //Generate the correct port
@@ -69,21 +65,21 @@ public class Client implements Runnable {
             //The communication starts
             byte[] message;
             WatchdogThread watchdog = new WatchdogThread();
-            while (!watchdog.haveIToStop()){
+            while (!watchdog.haveIToStop() && !stop){
                 DatagramPacket messagePacket = csma.csmaWait();
 
                 int serverPort = isServer(messagePacket);
-                freeKW=helloGetFreeWatts(messagePacket);
+                Integer freeKW = helloGetFreeWatts(messagePacket);
 
                 //If is the "HELLO" message by the server
-                if(serverPort != -1 && freeKW != null && freeKW>=kW){
+                if(serverPort != -1 && freeKW != null && freeKW >= kW){
                     InetAddress addressOutput=messagePacket.getAddress();
                     gui.setServer("Address server: "+addressOutput+" Port: "+serverPort);
                     //CSMA Protocol
                     watchdog = new WatchdogThread();
                     csma.check(watchdog);
 
-                    while(gui.checkONPower() && !csma.disconnect() && !watchdog.haveIToStop()){
+                    while(gui.checkONPower() && !csma.disconnect() && !watchdog.haveIToStop() && !stop){
                         gui.setState("ON");
                         message = aliveMessage(typeID, kW);
 
@@ -109,10 +105,16 @@ public class Client implements Runnable {
             gui.setState("SERVER DISCONNECTED!");
    
         } catch (IOException | InterruptedException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            gui.setState("ERROR!");
+            stopProtocol();
         }
          
         
+    }
+
+    public void stopProtocol(){
+        stop = true;
+        csma.stopChecking();
     }
 
     /**
@@ -145,7 +147,6 @@ public class Client implements Runnable {
      * @param type the type of client selected
      * @return v[0] is a typeID while v[1] is the kW
      */
-    
     private static int[] setID(String type){
         int[] v = new int[2];
         switch(type){
