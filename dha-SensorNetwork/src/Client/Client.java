@@ -16,6 +16,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
 
+
+/**
+ * A class that implements a generic device. Has a reference to the gui.
+ */
 public class Client implements Runnable {
 
     private final ClientGUI gui;
@@ -23,24 +27,25 @@ public class Client implements Runnable {
     private boolean stop = false;
     private CSMAManager csma;
 
+    /**
+     * Constructor
+     * @param gui the ClientGUI instance
+     */
     Client(ClientGUI gui){
         this.gui=gui;
     }
-    
-    
-   
+
    /**
      * Basically the main.Choose the type of type,opens the multicast socket and wait the message of server.
      * Client periodically sends the "alive" message to the server.
      */
-    
     @Override
     public void run(){
         
         try {
             Object[] possibleType={"WASHING MACHINE [240w]","FRIDGE [305w]","LIGHT BULB [150w]","THERMOSTAT [750w]","OVEN [1500w]","FISH TANK [400w]","TV [150w]"};
             String type;
-            type=(String)JOptionPane.showInputDialog(null,"Possible Type", "Choise",JOptionPane.QUESTION_MESSAGE,null,possibleType,"TV");
+            type=(String)JOptionPane.showInputDialog(null,"Possible Type", "Choose",JOptionPane.QUESTION_MESSAGE,null,possibleType,"TV");
             int typeID = setID(type)[0];
             int kW = setID(type)[1];
             gui.setClient("This is the type selected: "+type);
@@ -52,34 +57,46 @@ public class Client implements Runnable {
             csma = new CSMAManager(multicastSocket);
 
             DatagramSocket socket;
-            //Generate the correct port
-             while(true){
-                    try{
-                        socket = new DatagramSocket(port);
-                        break;
-                    } catch (BindException e) {
-                        port = generatePort();
-                    }
-                }
 
-            //The communication starts
+            //Generate the correct port
+            while(true){
+                try{
+                    socket = new DatagramSocket(port);
+                    break;
+                } catch (BindException e) {
+                    port = generatePort();
+                }
+            }
+
             byte[] message;
+
+            //Instantiates the watchdog
             WatchdogThread watchdog = new WatchdogThread();
+
+            //Continues running until the server is active or the gui is not closed
             while (!watchdog.haveIToStop() && !stop){
+
+                //Receives a message from the server and waits if the CSMA protocol
+                //has been activated
                 DatagramPacket messagePacket = csma.csmaWait();
 
                 int serverPort = isServer(messagePacket);
                 Integer freeKW = helloGetFreeWatts(messagePacket);
 
-                //If is the "HELLO" message by the server
+                //Starts only if it receives a valid message from the server and the
+                //available power is more than the power that it needs
                 if(serverPort != -1 && freeKW != null && freeKW >= kW){
                     InetAddress addressOutput=messagePacket.getAddress();
                     gui.setServer("Address server: "+addressOutput+" Port: "+serverPort);
 
                     //CSMA Protocol
                     watchdog = new WatchdogThread();
+
+                    //Start checking the multicast message to check if the maximum power has been reached
                     csma.check(watchdog);
 
+                    //Sends alive (and so it's on) until the OFF button is pressed or the total maximum power
+                    //is reached (so CSMA wait starts) or the server stops or the gui closes
                     while(gui.checkONPower() && !csma.disconnect() && !watchdog.haveIToStop() && !stop){
                         gui.setState("ON");
                         message = aliveMessage(typeID, kW);
@@ -91,6 +108,7 @@ public class Client implements Runnable {
                         Thread.sleep(1000);
                     }
 
+                    //Stop checking the multicast socket
                     csma.stopChecking();
 
                     if(!gui.checkONPower()){
@@ -113,7 +131,10 @@ public class Client implements Runnable {
         
     }
 
-    public void stopProtocol(){
+    /**
+     * Forces stopping the thread
+     */
+    void stopProtocol(){
         stop = true;
         csma.stopChecking();
     }
