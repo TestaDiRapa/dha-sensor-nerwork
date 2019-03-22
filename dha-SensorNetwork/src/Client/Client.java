@@ -68,11 +68,9 @@ public class Client implements Runnable {
 
             //The communication starts
             byte[] message;
-            System.out.println("FUORI DAL WHILE");
-            while (true){
-                System.out.println("DENTRO IL WHILE");
+            WatchdogThread watchdog = new WatchdogThread();
+            while (!watchdog.haveIToStop()){
                 DatagramPacket messagePacket = csma.csmaWait();
-                System.out.println("FUORI DA WAIT");
 
                 int serverPort = isServer(messagePacket);
                 freeKW=helloGetFreeWatts(messagePacket);
@@ -82,9 +80,10 @@ public class Client implements Runnable {
                     InetAddress addressOutput=messagePacket.getAddress();
                     gui.setServer("Address server: "+addressOutput+" Port: "+serverPort);
                     //CSMA Protocol
-                    csma.check();
+                    watchdog = new WatchdogThread();
+                    csma.check(watchdog);
 
-                    while(gui.checkONPower() && !csma.disconnect()){
+                    while(gui.checkONPower() && !csma.disconnect() && !watchdog.haveIToStop()){
                         gui.setState("ON");
                         message = aliveMessage(typeID, kW);
 
@@ -107,6 +106,7 @@ public class Client implements Runnable {
                     if(gui.checkONPower()) gui.setState("WAITING TO HAVE ENOUGH FREE POWER");
                 }
             }
+            gui.setState("SERVER DISCONNECTED!");
    
         } catch (IOException | InterruptedException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);

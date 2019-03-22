@@ -26,6 +26,7 @@
           <component id="42863" class="javax.swing.JTextArea" binding="infoPanel">
             <constraints/>
             <properties>
+              <editable value="false"/>
               <minimumSize width="575" height="225"/>
               <preferredSize width="575" height="225"/>
             </properties>

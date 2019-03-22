@@ -20,10 +20,11 @@ class CSMAManager {
         this.socket = socket;
     }
 
-    void check() {
+    void check(WatchdogThread watchdog) {
         stop = false;
         new Thread(() -> {
             disconnect = false;
+            watchdog.start();
             byte[] message = new byte[MAX];
             DatagramPacket messagePacket = new DatagramPacket(message, message.length);
             try {
@@ -31,6 +32,7 @@ class CSMAManager {
                     Integer res;
                     do {
                         socket.receive(messagePacket);
+                        watchdog.restart();
                         res = helloGetFreeWatts(messagePacket);
                     } while (res == null);
 
@@ -52,15 +54,10 @@ class CSMAManager {
         byte[] message = new byte[MAX];
         DatagramPacket messagePacket = new DatagramPacket(message, message.length);
 
-        if(wait <= 2){
-            socket.receive(messagePacket);
-            return messagePacket;
-        }
-
         long start = Instant.now().toEpochMilli();
         do{
             socket.receive(messagePacket);
-        }while((Instant.now().toEpochMilli() - start) < wait*10000);
+        }while(wait > 2 && (Instant.now().toEpochMilli() - start) < wait*10000);
 
         return messagePacket;
     }
