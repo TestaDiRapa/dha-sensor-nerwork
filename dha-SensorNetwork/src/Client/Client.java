@@ -75,6 +75,7 @@ public class Client implements Runnable {
                 if(serverPort != -1 && freeKW != null && freeKW >= kW){
                     InetAddress addressOutput=messagePacket.getAddress();
                     gui.setServer("Address server: "+addressOutput+" Port: "+serverPort);
+
                     //CSMA Protocol
                     watchdog = new WatchdogThread();
                     csma.check(watchdog);
