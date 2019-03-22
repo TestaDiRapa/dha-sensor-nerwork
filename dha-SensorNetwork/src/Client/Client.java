@@ -22,8 +22,6 @@ import javax.swing.JOptionPane;
 public class Client implements Runnable {
     
     private int typeID;
-    private String addressOutput;
-    private int portOutput;
     private final ClientGUI gui;
     private int port;
     private int kW;
@@ -56,7 +54,6 @@ public class Client implements Runnable {
             multicastSocket.joinGroup(InetAddress.getByName(ADDRESS));
 
             CSMAManager csma = new CSMAManager(multicastSocket);
-            csma.csmaWait();
 
             DatagramSocket socket;
             //Generate the correct port
@@ -71,8 +68,11 @@ public class Client implements Runnable {
 
             //The communication starts
             byte[] message;
+            System.out.println("FUORI DAL WHILE");
             while (true){
+                System.out.println("DENTRO IL WHILE");
                 DatagramPacket messagePacket = csma.csmaWait();
+                System.out.println("FUORI DA WAIT");
 
                 int serverPort = isServer(messagePacket);
                 freeKW=helloGetFreeWatts(messagePacket);

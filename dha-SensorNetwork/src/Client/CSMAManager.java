@@ -20,7 +20,7 @@ class CSMAManager {
         this.socket = socket;
     }
 
-    public void check() {
+    void check() {
         stop = false;
         new Thread(() -> {
             disconnect = false;
@@ -31,7 +31,6 @@ class CSMAManager {
                     Integer res;
                     do {
                         socket.receive(messagePacket);
-                        //System.out.println("CSMA: " + new String(messagePacket.getData()));
                         res = helloGetFreeWatts(messagePacket);
                     } while (res == null);
 
@@ -45,15 +44,15 @@ class CSMAManager {
         }).start();
     }
 
-    public void stopChecking() {stop = true;}
+    void stopChecking() {stop = true;}
 
-    public boolean disconnect() {return disconnect;}
+    boolean disconnect() {return disconnect;}
 
-    public DatagramPacket csmaWait() throws IOException {
+    DatagramPacket csmaWait() throws IOException {
         byte[] message = new byte[MAX];
         DatagramPacket messagePacket = new DatagramPacket(message, message.length);
 
-        if(wait > 2){
+        if(wait <= 2){
             socket.receive(messagePacket);
             return messagePacket;
         }
@@ -66,5 +65,5 @@ class CSMAManager {
         return messagePacket;
     }
 
-    public void resetWait() {wait = 2;}
+    void resetWait() {wait = 2;}
 }

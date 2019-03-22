@@ -1,5 +1,6 @@
 package Server;
 
+import javax.annotation.processing.SupportedSourceVersion;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
@@ -75,6 +76,7 @@ public class Server implements Runnable{
      * @throws IOException exception
      */
     private synchronized void sendHello() throws IOException {
+        System.out.println("HELLO");
         int usedPower = 0;
         for(Map.Entry<Identifier, Device> e : devices.entrySet()) {
             if((Instant.now().toEpochMilli() - e.getValue().getLastCommunication().toEpochMilli() <= DISCONNECT_TIME))

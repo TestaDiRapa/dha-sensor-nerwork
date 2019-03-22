@@ -70,7 +70,7 @@ public class ServerGUI {
         Collections.sort(devicesList);
         StringBuilder tmp = new StringBuilder();
         tmp.append("Power used: " + (TOTAL_POWER - freePower) + "W of " + TOTAL_POWER + " W");
-        if (freePower < 0) tmp.append(" WARNING! DISCONNECT SOMETHING!");
+        if (freePower < 0) tmp.append(" WARNING!");
         tmp.append("\n");
         for (Device d : devicesList) {
             tmp.append(parseType(d.getType())).append(":\n\tLast confirm: ").append(parseInterval(d.getLastCommunication())).append("\n\n");
