@@ -20,7 +20,7 @@ class CSMAManager {
         this.socket = socket;
     }
 
-    void check() {
+    public void check() {
         stop = false;
         new Thread(() -> {
             disconnect = false;
@@ -45,11 +45,11 @@ class CSMAManager {
         }).start();
     }
 
-    void stopChecking() {stop = true;}
+    public void stopChecking() {stop = true;}
 
-    boolean disconnect() {return disconnect;}
+    public boolean disconnect() {return disconnect;}
 
-    DatagramPacket csmaWait() throws IOException {
+    public DatagramPacket csmaWait() throws IOException {
         byte[] message = new byte[MAX];
         DatagramPacket messagePacket = new DatagramPacket(message, message.length);
 
@@ -66,5 +66,5 @@ class CSMAManager {
         return messagePacket;
     }
 
-    void resetWait() {wait = 2;}
+    public void resetWait() {wait = 2;}
 }

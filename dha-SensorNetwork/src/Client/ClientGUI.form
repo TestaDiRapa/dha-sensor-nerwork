@@ -83,7 +83,7 @@
     </Component>
     <Component class="javax.swing.JLabel" name="jClientInformation">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Client"/>
+        <Property name="text" type="java.lang.String" value="Device"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jState">

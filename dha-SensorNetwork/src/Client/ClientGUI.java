@@ -57,7 +57,7 @@ public class ClientGUI extends javax.swing.JFrame {
 
         jServerInformation.setText("Server");
 
-        jClientInformation.setText("Client");
+        jClientInformation.setText("Device");
 
         jState.setText("State");
 
