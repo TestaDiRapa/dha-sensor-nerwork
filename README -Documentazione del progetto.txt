@@ -20,7 +20,7 @@ Se il contatore arriva a 10(=10 secondi) prima di ricevere un ALIVE da quello st
 Nel caso in cui invece arrivasse il messaggio di ALIVE prima dello scadere dei 10 secondi del contatore, quest'ultimo verrà resettato.
 Il client potrà anche spegnersi selezionando il jRadioButton "OFF" non inviando più i messaggi di ALIVE al server.
 Come spiegato nel funzionamento del server, il client potrà ricollegarsi prima dei 10 secondi dall'ultimo ALIVE inviato, oppure dovrà aspettare un nuovo messaggio di HELLO da parte del server.
-Nel caso in cui i client siano accesi, e il server si spegne, il client riconoscerà la mancanza del server dopo 20 secondi e si spegnerà anch'esso.
+Nel caso in cui i client siano accesi, e il server si spegne, il client riconoscerà la mancanza del server dopo 20 secondi e non inviarà messaggi alive, ma se si rimette ON, attenderà l'accensione di un altro server per connettersi.
 
 Nell'interfaccia del Client, una volta selezionato il dispositivo IOT da connettere, è possibile visualizzare le seguenti informazioni:
 - indirizzo e porta del server, una volta ricevuto il messaggio di HELLO; 
