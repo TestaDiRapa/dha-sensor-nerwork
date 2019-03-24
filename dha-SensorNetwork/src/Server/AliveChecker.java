@@ -38,7 +38,7 @@ public class AliveChecker implements Runnable {
             }
         } catch (BindException e) {
             JOptionPane.showMessageDialog(null, "Port already in use!\nIs the server started already?", "Error!", JOptionPane.ERROR_MESSAGE);
-            System.exit(1);
+            System.exit(0);
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -5,6 +5,7 @@
  */
 package Client;
 
+import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -17,28 +18,37 @@ public class ClientGUI extends javax.swing.JFrame {
      * Creates new form Client
      */
     private ClientGUI() {
-        initComponents();
-        client= new Client(this);
-        new Thread(client).start();
-        OffButton.setSelected(true);
+        Object[] possibleType={"WASHING MACHINE [240w]","FRIDGE [305w]","LIGHT BULB [150w]","THERMOSTAT [750w]","OVEN [1500w]","FISH TANK [400w]","TV [150w]"};
+        String type =(String) JOptionPane.showInputDialog(null,"Possible Type", "Choose",JOptionPane.QUESTION_MESSAGE,null,possibleType,"TV");
+        if(type != null) {
+            int id = setID(type)[0];
+            int kw = setID(type)[1];
 
-        OnButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                setState("WAITING FOR DISCOVERY FROM THE SERVER!");
-            }
-        });
+            initComponents();
+            client = new Client(this, id, kw, type);
+            new Thread(client).start();
+            OffButton.setSelected(true);
 
-        this.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosed(WindowEvent e) {
-                client.stopProtocol();
-            }
-        });
+            OnButton.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    setState("WAITING FOR DISCOVERY FROM THE SERVER!");
+                }
+            });
+
+            this.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosed(WindowEvent e) {
+                    client.stopProtocol();
+                }
+            });
+        }
+        else{
+            System.exit(0);
+        }
     }
 
-    
-        boolean checkONPower(){ return !OffButton.isSelected();    }
+    boolean checkONPower(){ return !OffButton.isSelected();}
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -182,6 +192,26 @@ public class ClientGUI extends javax.swing.JFrame {
     
     public void setTextArea(String s){
         jTextArea1.append(s);
+    }
+
+    /**
+     * Set the typeID number and kw corresponding to the type of client selected
+     * @param type the type of client selected
+     * @return v[0] is a typeID while v[1] is the kW
+     */
+    private static int[] setID(String type){
+        int[] v = new int[2];
+        switch(type){
+            case "WASHING MACHINE [240w]": v[0]=0; v[1]=240;break;
+            case "FRIDGE [305w]": v[0]=1;v[1]=305;break;
+            case "LIGHT BULB [150w]":v[0]=2;v[1]=150;break; //All the lighting
+            case "THERMOSTAT [750w]": v[0]=3;v[1]=750;break;
+            case "OVEN [1500w]":v[0]=4;v[1]=1500;break;
+            case "FISH TANK [400w]":v[0]=5;v[1]=400;break;
+            case "TV [150w]":v[0]=6;v[1]=150;break;
+            default : v[0]=-1;v[1]=0;
+        }
+        return v;
     }
    
 

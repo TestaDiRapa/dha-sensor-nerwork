@@ -1,5 +1,8 @@
 package Commons;
 
+/**
+ * An interface with the constants used
+ */
 public interface Constants {
 
     String ADDRESS = "224.0.0.2";

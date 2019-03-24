@@ -93,17 +93,6 @@ public class ServerGUI {
     }
 
     /**
-     * Parses the value of a Device to display it
-     *
-     * @param value the value to display
-     * @return a String to display
-     */
-    private String parseValue(Integer value) {
-        if (value == null) return "No value sent!";
-        return value.toString();
-    }
-
-    /**
      * Parses the type to make it a String
      *
      * @param type an int of the Constants interface
@@ -168,6 +157,7 @@ public class ServerGUI {
         gbc.fill = GridBagConstraints.BOTH;
         mainFrame.add(scrollPane1, gbc);
         infoPanel = new JTextArea();
+        infoPanel.setEditable(false);
         infoPanel.setMinimumSize(new Dimension(575, 225));
         infoPanel.setPreferredSize(new Dimension(575, 225));
         scrollPane1.setViewportView(infoPanel);

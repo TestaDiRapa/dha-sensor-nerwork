@@ -3,7 +3,7 @@ package Server;
 import java.time.Instant;
 
 /**
- * A class that represents a device as IP + PORT
+ * A class that represents a device. Contains informations about it's type, the power consumption and the last ALIVE received
  */
 class Device implements Comparable<Device>{
 
@@ -17,7 +17,7 @@ class Device implements Comparable<Device>{
         lastCommunication = Instant.now();
     }
 
-    public int getPowerConsumption() {
+    int getPowerConsumption() {
         return powerConsumption;
     }
 

@@ -7,8 +7,8 @@ package Client;
 
 import static Commons.Constants.ADDRESS;
 import static Commons.Constants.MULTICAST_PORT;
-import static Commons.ResponseParser.aliveMessage;
-import static Commons.ResponseParser.helloGetFreeWatts;
+import static Commons.ResponseParser.*;
+
 import java.io.IOException;
 import java.net.*;
 import java.util.Random;
@@ -23,19 +23,26 @@ import javax.swing.JOptionPane;
 public class Client implements Runnable {
 
     private final ClientGUI gui;
-    private int port;
+    private int port, typeID, kW;
+    private String type;
     private boolean stop = false;
     private CSMAManager csma;
 
     /**
      * Constructor
-     * @param gui the ClientGUI instance
+     * @param gui a ClientGUI instance
+     * @param typeID the ID of the type of the device
+     * @param kW the power needed
+     * @param type a String to display
      */
-    Client(ClientGUI gui){
-        this.gui=gui;
+    Client(ClientGUI gui, int typeID, int kW, String type) {
+        this.gui = gui;
+        this.typeID = typeID;
+        this.kW = kW;
+        this.type = type;
     }
 
-   /**
+    /**
      * Basically the main.Choose the type of type,opens the multicast socket and wait the message of server.
      * Client periodically sends the "alive" message to the server.
      */
@@ -43,11 +50,6 @@ public class Client implements Runnable {
     public void run(){
         
         try {
-            Object[] possibleType={"WASHING MACHINE [240w]","FRIDGE [305w]","LIGHT BULB [150w]","THERMOSTAT [750w]","OVEN [1500w]","FISH TANK [400w]","TV [150w]"};
-            String type;
-            type=(String)JOptionPane.showInputDialog(null,"Possible Type", "Choose",JOptionPane.QUESTION_MESSAGE,null,possibleType,"TV");
-            int typeID = setID(type)[0];
-            int kW = setID(type)[1];
             gui.setClient("This is the type selected: "+type);
             gui.setState("OFF");
                         
@@ -80,7 +82,7 @@ public class Client implements Runnable {
                 //has been activated
                 DatagramPacket messagePacket = csma.csmaWait();
 
-                int serverPort = isServer(messagePacket);
+                int serverPort = helloGetPort(messagePacket);
                 Integer freeKW = helloGetFreeWatts(messagePacket);
 
                 //Starts only if it receives a valid message from the server and the
@@ -121,7 +123,8 @@ public class Client implements Runnable {
                     if(gui.checkONPower()) gui.setState("WAITING TO HAVE ENOUGH FREE POWER");
                 }
             }
-            gui.setState("SERVER DISCONNECTED!");
+            JOptionPane.showMessageDialog(null, "Server disconnected!", "Error!", JOptionPane.ERROR_MESSAGE);
+            stopProtocol();
    
         } catch (IOException | InterruptedException ex) {
             gui.setState("ERROR!");
@@ -135,8 +138,10 @@ public class Client implements Runnable {
      * Forces stopping the thread
      */
     void stopProtocol(){
+        gui.dispose();
         stop = true;
         csma.stopChecking();
+        System.exit(0);
     }
 
     /**
@@ -146,43 +151,7 @@ public class Client implements Runnable {
     private int generatePort() {
         return new Random().nextInt(2000) + 8000;
     }
-    
-    /**
-     * Control if the message is from the server, takes the port number from the message content
-     * @param packet the packet from the server
-     * @return the port number or -1
-     */
-    private static int isServer(DatagramPacket packet){
-        
-        String payload = new String(packet.getData());
-        if(payload.matches("HELLO[0-9]{4}.*")){
-            Pattern p = Pattern.compile("(HELLO)([0-9]{4})(.*)");
-            Matcher m = p.matcher(payload);
-            m.find();
-            return Integer.parseInt(m.group(2));
-        }
-        return -1;
-    } 
-    
-    /**
-     * Set the typeID number and kw corresponding to the type of client selected
-     * @param type the type of client selected
-     * @return v[0] is a typeID while v[1] is the kW
-     */
-    private static int[] setID(String type){
-        int[] v = new int[2];
-        switch(type){
-            case "WASHING MACHINE [240w]": v[0]=0; v[1]=240;break;
-            case "FRIDGE [305w]": v[0]=1;v[1]=305;break; 
-            case "LIGHT BULB [150w]":v[0]=2;v[1]=150;break; //All the lighting 
-            case "THERMOSTAT [750w]": v[0]=3;v[1]=750;break; 
-            case "OVEN [1500w]":v[0]=4;v[1]=1500;break;
-            case "FISH TANK [400w]":v[0]=5;v[1]=400;break; 
-            case "TV [150w]":v[0]=6;v[1]=150;break;
-            default : v[0]=-1;v[1]=0;
-        }
-        return v;
-    }
+
     
    
     

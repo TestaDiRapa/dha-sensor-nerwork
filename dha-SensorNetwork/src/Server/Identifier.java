@@ -3,21 +3,24 @@ package Server;
 import java.net.InetAddress;
 import java.util.Objects;
 
+/**
+ * Class used to identify the device as PORT + IP
+ */
 public class Identifier {
 
     private InetAddress address;
     private int port;
 
-    public Identifier(InetAddress address, int port) {
+    Identifier(InetAddress address, int port) {
         this.address = address;
         this.port = port;
     }
 
-    public InetAddress getAddress() {
+    private InetAddress getAddress() {
         return address;
     }
 
-    public int getPort() {
+    private int getPort() {
         return port;
     }
 
