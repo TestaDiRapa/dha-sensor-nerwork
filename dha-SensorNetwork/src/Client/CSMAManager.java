@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.MulticastSocket;
 import java.time.Instant;
+import java.util.Random;
 
 import static Commons.Constants.MAX;
 import static Commons.ResponseParser.helloGetFreeWatts;
@@ -78,12 +79,14 @@ class CSMAManager {
     /**
      * This method implements the wait for the CSMA protocol and stops while continuing listening
      * the multicast socket
+     * @param watchdog a WatchdogThread instance
      * @return the last datagram read
      * @throws IOException an exception
      */
-    DatagramPacket csmaWait() throws IOException {
+    DatagramPacket csmaWait(WatchdogThread watchdog) throws IOException {
         byte[] message = new byte[MAX];
         DatagramPacket messagePacket = new DatagramPacket(message, message.length);
+        watchdog.start();
 
         //The starting instant (in milliseconds)
         long start = Instant.now().toEpochMilli();
@@ -92,7 +95,8 @@ class CSMAManager {
         //If wait is less than 2 (base value) it just read the first datagram
         do{
             socket.receive(messagePacket);
-        }while(wait > 2 && (Instant.now().toEpochMilli() - start) < wait*10000);
+            watchdog.restart();
+        }while(wait > 2 && (Instant.now().toEpochMilli() - start) < new Random().nextInt(wait*10000));
 
         return messagePacket;
     }

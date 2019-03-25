@@ -80,7 +80,7 @@ public class Client implements Runnable {
 
                 //Receives a message from the server and waits if the CSMA protocol
                 //has been activated
-                DatagramPacket messagePacket = csma.csmaWait();
+                DatagramPacket messagePacket = csma.csmaWait(watchdog);
 
                 int serverPort = helloGetPort(messagePacket);
                 Integer freeKW = helloGetFreeWatts(messagePacket);
