@@ -50,9 +50,4 @@ class WatchdogThread {
         return stop;
     }
 
-    /**
-     * @return the watchdog thread status
-     */
-    synchronized Thread.State status() {return watchdog.getState();}
-
 }
