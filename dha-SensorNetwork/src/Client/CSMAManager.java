@@ -34,11 +34,12 @@ class CSMAManager {
      * Asynchronous method. Checks for the used power and reset the watchdog
      */
     void check() {
-        watchdog.start();
+
         synchronized (socket) {
             stop = false;
             new Thread(() -> {
                 disconnect = false;
+                watchdog.start();
 
                 byte[] message = new byte[MAX];
                 DatagramPacket messagePacket = new DatagramPacket(message, message.length);
@@ -60,6 +61,7 @@ class CSMAManager {
                         disconnect = (res < 0);
                         if (disconnect) wait++;
                     } while (!disconnect && !stop);
+                    watchdog.stop();
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -73,7 +75,6 @@ class CSMAManager {
      */
     void stopChecking() {
         stop = true;
-        watchdog.stop();
     }
 
     /**
