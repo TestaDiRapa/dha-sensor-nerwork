@@ -21,6 +21,7 @@ public class ServerGUI {
     private JTextArea infoPanel;
     private JPanel mainFrame;
     private JButton refreshButton;
+    private JScrollPane scroller;
 
     private static Server server;
     private static JFrame frame;
@@ -72,9 +73,12 @@ public class ServerGUI {
         tmp.append("Power used: " + (TOTAL_POWER - freePower) + "W of " + TOTAL_POWER + " W");
         if (freePower < 0) tmp.append(" WARNING!");
         tmp.append("\n");
+        int rows = 1;
         for (Device d : devicesList) {
             tmp.append(parseType(d.getType())).append(":\n\tLast confirm: ").append(parseInterval(d.getLastCommunication())).append("\n\n");
+            rows += 3;
         }
+        infoPanel.setRows(rows);
         infoPanel.setText(tmp.toString());
     }
 
@@ -147,20 +151,21 @@ public class ServerGUI {
         mainFrame.setFocusable(true);
         mainFrame.setMinimumSize(new Dimension(300, 300));
         mainFrame.setPreferredSize(new Dimension(600, 300));
-        final JScrollPane scrollPane1 = new JScrollPane();
-        scrollPane1.setMinimumSize(new Dimension(580, 230));
-        scrollPane1.setPreferredSize(new Dimension(580, 230));
+        scroller = new JScrollPane();
+        scroller.setHorizontalScrollBarPolicy(30);
+        scroller.setMinimumSize(new Dimension(580, 230));
+        scroller.setPreferredSize(new Dimension(580, 230));
         GridBagConstraints gbc;
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.BOTH;
-        mainFrame.add(scrollPane1, gbc);
+        mainFrame.add(scroller, gbc);
         infoPanel = new JTextArea();
         infoPanel.setEditable(false);
         infoPanel.setMinimumSize(new Dimension(575, 225));
         infoPanel.setPreferredSize(new Dimension(575, 225));
-        scrollPane1.setViewportView(infoPanel);
+        scroller.setViewportView(infoPanel);
         refreshButton = new JButton();
         refreshButton.setMaximumSize(new Dimension(40, 30));
         refreshButton.setMinimumSize(new Dimension(40, 30));
