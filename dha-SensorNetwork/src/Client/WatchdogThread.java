@@ -18,7 +18,7 @@ class WatchdogThread {
 
         watchdog = new Thread(() -> {
             try {
-                Thread.sleep(5000);
+                Thread.sleep(20000);
                 stop = true;
             } catch (InterruptedException e) {
                 stop = false;
