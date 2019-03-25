@@ -5,17 +5,20 @@ package Client;
  */
 class WatchdogThread {
 
-    private Thread watchdog;
+    private Thread watchdog = new Thread();
     private boolean stop = false;
 
     /**
      * Asynchronous method: instantiates a thread that waits 20 seconds. If not interrupt before, changes
      * the stop variable to true
      */
-    void start() {
+    synchronized void start() {
+        //I have to be sure that the previous thread stopped correctly
+        watchdog.interrupt();
+
         watchdog = new Thread(() -> {
             try {
-                Thread.sleep(20000);
+                Thread.sleep(5000);
                 stop = true;
             } catch (InterruptedException e) {
                 stop = false;
@@ -33,11 +36,23 @@ class WatchdogThread {
     }
 
     /**
+     * Stops the watchdog
+     */
+    synchronized void stop() {
+        watchdog.interrupt();
+    }
+
+    /**
      * Allow to retrieve the status of the watchdog
      * @return true if it wasn't reset, false otherwise
      */
-    boolean haveIToStop(){
+    synchronized boolean haveIToStop(){
         return stop;
     }
+
+    /**
+     * @return the watchdog thread status
+     */
+    synchronized Thread.State status() {return watchdog.getState();}
 
 }

@@ -18,25 +18,28 @@ class CSMAManager {
     private int wait = 2;
     private boolean stop;
     private final MulticastSocket socket;
+    private final WatchdogThread watchdog;
 
     /**
      * Constructor
      * @param socket the MulticastSocket
+     * @param watchdog a WatchdogThread instance
      */
-    CSMAManager(MulticastSocket socket) {
+    CSMAManager(MulticastSocket socket, WatchdogThread watchdog) {
         this.socket = socket;
+        this.watchdog = watchdog;
     }
 
     /**
      * Asynchronous method. Checks for the used power and reset the watchdog
-     * @param watchdog a WatchdogThread instance
      */
-    void check(WatchdogThread watchdog) {
+    void check() {
+        watchdog.start();
         synchronized (socket) {
             stop = false;
             new Thread(() -> {
                 disconnect = false;
-                watchdog.start();
+
                 byte[] message = new byte[MAX];
                 DatagramPacket messagePacket = new DatagramPacket(message, message.length);
                 try {
@@ -68,7 +71,10 @@ class CSMAManager {
     /**
      * This method allows to stop the check method
      */
-    void stopChecking() {stop = true;}
+    void stopChecking() {
+        stop = true;
+        watchdog.stop();
+    }
 
     /**
      * Returns the disconnect status
@@ -79,14 +85,12 @@ class CSMAManager {
     /**
      * This method implements the wait for the CSMA protocol and stops while continuing listening
      * the multicast socket
-     * @param watchdog a WatchdogThread instance
      * @return the last datagram read
      * @throws IOException an exception
      */
-    DatagramPacket csmaWait(WatchdogThread watchdog) throws IOException {
+    DatagramPacket csmaWait() throws IOException {
         byte[] message = new byte[MAX];
         DatagramPacket messagePacket = new DatagramPacket(message, message.length);
-        watchdog.start();
 
         //The starting instant (in milliseconds)
         long start = Instant.now().toEpochMilli();
@@ -95,7 +99,6 @@ class CSMAManager {
         //If wait is less than 2 (base value) it just read the first datagram
         do{
             socket.receive(messagePacket);
-            watchdog.restart();
         }while(wait > 2 && (Instant.now().toEpochMilli() - start) < new Random().nextInt(wait*10000));
 
         return messagePacket;

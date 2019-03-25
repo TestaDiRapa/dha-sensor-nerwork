@@ -56,7 +56,9 @@ public class Client implements Runnable {
             MulticastSocket multicastSocket = new MulticastSocket(MULTICAST_PORT);
             multicastSocket.joinGroup(InetAddress.getByName(ADDRESS));
 
-            csma = new CSMAManager(multicastSocket);
+            //Instantiates the watchdog
+            WatchdogThread watchdog = new WatchdogThread();
+            csma = new CSMAManager(multicastSocket, watchdog);
 
             DatagramSocket socket;
 
@@ -72,15 +74,12 @@ public class Client implements Runnable {
 
             byte[] message;
 
-            //Instantiates the watchdog
-            WatchdogThread watchdog = new WatchdogThread();
-
             //Continues running until the server is active or the gui is not closed
             while (!watchdog.haveIToStop() && !stop){
 
                 //Receives a message from the server and waits if the CSMA protocol
                 //has been activated
-                DatagramPacket messagePacket = csma.csmaWait(watchdog);
+                DatagramPacket messagePacket = csma.csmaWait();
 
                 int serverPort = helloGetPort(messagePacket);
                 Integer freeKW = helloGetFreeWatts(messagePacket);
@@ -91,11 +90,8 @@ public class Client implements Runnable {
                     InetAddress addressOutput=messagePacket.getAddress();
                     gui.setServer("Address server: "+addressOutput+" Port: "+serverPort);
 
-                    //CSMA Protocol
-                    watchdog = new WatchdogThread();
-
                     //Start checking the multicast message to check if the maximum power has been reached
-                    csma.check(watchdog);
+                    csma.check();
 
                     //Sends alive (and so it's on) until the OFF button is pressed or the total maximum power
                     //is reached (so CSMA wait starts) or the server stops or the gui closes
