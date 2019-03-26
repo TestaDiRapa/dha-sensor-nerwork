@@ -55,10 +55,10 @@ public class Server implements Runnable{
 
             }
 
-            multicastSocket.close();
-
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
+        } finally {
+            multicastSocket.close();
         }
     }
 

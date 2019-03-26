@@ -12,8 +12,6 @@ import static Commons.ResponseParser.*;
 import java.io.IOException;
 import java.net.*;
 import java.util.Random;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
 
 
@@ -48,19 +46,18 @@ public class Client implements Runnable {
      */
     @Override
     public void run(){
-        
-        try {
+
+        DatagramSocket socket = null;
+
+        try(MulticastSocket multicastSocket = new MulticastSocket(MULTICAST_PORT)) {
             gui.setClient("This is the type selected: "+type);
             gui.setState("OFF");
-                        
-            MulticastSocket multicastSocket = new MulticastSocket(MULTICAST_PORT);
+
             multicastSocket.joinGroup(InetAddress.getByName(ADDRESS));
 
             //Instantiates the watchdog
             WatchdogThread watchdog = new WatchdogThread();
             csma = new CSMAManager(multicastSocket, watchdog);
-
-            DatagramSocket socket;
 
             //Generate the correct port
             while(true){
@@ -125,6 +122,8 @@ public class Client implements Runnable {
         } catch (IOException | InterruptedException ex) {
             gui.setState("ERROR!");
             stopProtocol();
+        } finally {
+            if(socket != null) socket.close();
         }
          
         
