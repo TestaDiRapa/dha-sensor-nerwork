@@ -53,8 +53,8 @@ class CSMAManager {
                         //Checks the multicast socket until it receives a valid message from the server
                         do {
                             socket.receive(messagePacket);
-                            watchdog.restart();
                             res = helloGetFreeWatts(messagePacket);
+                            watchdog.restart();
                         } while (res == null);
 
                         //If the power is negative, stop and increase the wait time

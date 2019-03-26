@@ -30,7 +30,7 @@ class WatchdogThread {
     /**
      * Interrupts the thread and restart it
      */
-    void restart() {
+    synchronized void restart() {
         watchdog.interrupt();
         start();
     }
